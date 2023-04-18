@@ -4,18 +4,32 @@ import './App.css';
 const App = () => {
 
     const [connected, setConnected] = useState(false);
+    const [ip, setIp] = useState("");
 
     const connectDB = async () => {
         // 
     }
 
-    const renderNotConnectedContainer = () => (
-        <div className="connect-DB-container">
-            <button className="cta-button connect-DB-button" onClick={connectDB}>
-                连接数据库
-            </button>
-        </div>
-    );
+    const renderNotConnectedContainer = () => {
+        return (
+            <div>
+                <div className="form-container first-row">
+                    <input 
+                     type="text"
+                     value={ip}
+                     placeholder="数据库IP地址"
+                     onChange={e => setIp(e.target.value)}
+                    />
+
+                </div>
+                <div className="connect-DB-container">
+                    <button className="cta-button connect-DB-button" onClick={connectDB}>
+                        连接数据库
+                    </button>
+                </div>
+            </div>
+        )
+    };
 
     return (
         <div className="App">
@@ -32,7 +46,7 @@ const App = () => {
                     </header>
                 </div>
 
-                {!connected && renderNotConnectedContainer}
+                {!connected && renderNotConnectedContainer()}
 
                 <div className="footer-container">
                     <a className="footer-text"

@@ -88,6 +88,24 @@
     animation: gradient-animation 4s ease infinite;
   }
 
+  .form-container{
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .first-row{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  
+  }
+
   /* 底部样式 */
   .footer-container {
     display: flex;
