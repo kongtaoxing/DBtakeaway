@@ -5,6 +5,10 @@ const App = () => {
 
     const [connected, setConnected] = useState(false);
 
+    const connectDB = async () => {
+        // 
+    }
+
     const renderNotConnectedContainer = () => (
         <div className="connect-DB-container">
             <button className="cta-button connect-DB-button" onClick={connectDB}>
@@ -28,7 +32,7 @@ const App = () => {
                     </header>
                 </div>
 
-                {connected && renderNotConnectedContainer}
+                {!connected && renderNotConnectedContainer}
 
                 <div className="footer-container">
                     <a className="footer-text"
