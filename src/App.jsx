@@ -2,7 +2,17 @@ import React, {useEffect, useState} from "react";
 import './App.css';
 
 const App = () => {
-    // 
+
+    const [connected, setConnected] = useState(false);
+
+    const renderNotConnectedContainer = () => (
+        <div className="connect-DB-container">
+            <button className="cta-button connect-DB-button" onClick={connectDB}>
+                连接数据库
+            </button>
+        </div>
+    );
+
     return (
         <div className="App">
             <div className="container">
@@ -17,6 +27,8 @@ const App = () => {
                         </div>
                     </header>
                 </div>
+
+                {connected && renderNotConnectedContainer}
 
                 <div className="footer-container">
                     <a className="footer-text"
