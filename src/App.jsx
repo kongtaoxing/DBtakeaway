@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import mysql from "mysql";
+import * as mysql from "mysql2";
 import './App.css';
 
 const App = () => {
@@ -16,7 +16,8 @@ const App = () => {
                 host: ip,
                 user: userName,
                 password: passwd,
-                database: `orders`
+                database: `orders`,
+                port: port
             });
             connection.connect();
         }
