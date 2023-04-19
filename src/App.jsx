@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
-// import mysql from 'mysql2';
+import mysql from 'mysql2';
 import './App.css';
-import { Sequelize } from "sequelize";
 
 const App = () => {
 
@@ -13,22 +12,29 @@ const App = () => {
 
     const connectDB = async () => {
         try {
-            const connection = new Sequelize(
-                'orders',
-                userName,
-                passwd,
-                {
-                    host: ip,
-                    port: port,
-                    dialect: 'mysql'
-                }
-            );
-            try {
-                await sequelize.authenticate();
-                console.log('Connection has been established successfully.');
-              } catch (error) {
-                console.error('Unable to connect to the database:', error);
-              }
+            // const connection = new Sequelize(
+            //     'orders',
+            //     userName,
+            //     passwd,
+            //     {
+            //         host: ip,
+            //         port: port,
+            //         dialect: 'mysql'
+            //     }
+            // );
+            // try {
+            //     await connection.authenticate();
+            //     console.log('Connection has been established successfully.');
+            //   } catch (error) {
+            //     console.error('Unable to connect to the database:', error);
+            //   }
+            const connection = mysql.createConnection({
+                host: ip,
+                user: userName,
+                password: passwd,
+                database: `orders`
+            });
+            connection.connect();
             setConnected(() => true);
         }
         catch (e) {
