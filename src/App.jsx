@@ -11,6 +11,8 @@ const App = () => {
     const [userName, setUserName] = useState("");
     const [passwd, setPasswd] = useState("");
     const [dbOrder, setDbOrder] = useState("");
+    const [showResult, setShowResult] = useState(false);
+    const [result, setResult] = useState("1");
 
     const connectDB = async () => {
         try {
@@ -46,6 +48,11 @@ const App = () => {
 
     const disconnectDB = async () => {
         setConnected(() => false);
+        setShowResult(() => false);
+    }
+
+    const queryDB = async () => {
+        setShowResult(() => true);
     }
 
     // 连接框
@@ -95,8 +102,8 @@ const App = () => {
     // 查询框
     const renderConnectedContainer = () => {
         return (
-            <div>
-                <div className="form-container second-row">
+            <div className="form-container">
+                <div className="second-row">
                     <p className="simple-text">请输入数据库指令：</p>
                     <div>
                         <input 
@@ -108,12 +115,21 @@ const App = () => {
                     </div>
                 </div>
                 <div className="connect-DB-container">
-                    <button className="cta-button connect-DB-button" onClick={null}>
+                    <button className="cta-button connect-DB-button" onClick={queryDB}>
                         开始查询
                     </button>
                 </div>
             </div>
         );
+    }
+
+    // 结果显示
+    const renderResultContainer = () => {
+        return (
+            <div className="form-container">
+                <p>{`查询结果：${result}`}</p>
+            </div>
+        )
     }
 
     return (
@@ -134,6 +150,7 @@ const App = () => {
 
                 {!connected && renderNotConnectedContainer()}
                 {connected && renderConnectedContainer()}
+                {showResult && renderResultContainer()}
 
                 <div className="footer-container">
                     <a className="footer-text"
