@@ -128,6 +128,13 @@
     margin-bottom: 10px;
   }
 
+  .second-row{
+    display: flex;
+    flex-direction: row;
+    margin-inline: 10px;
+    margin-bottom: 20px;
+  }
+
   /* 底部样式 */
   .footer-container {
     display: flex;

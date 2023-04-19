@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
-import mysql from 'mysql2';
+// import mysql from 'mysql2';
+// import { Sequelize } from "sequelize";
 import './App.css';
 
 const App = () => {
@@ -9,6 +10,7 @@ const App = () => {
     const [port, setPort] = useState();
     const [userName, setUserName] = useState("");
     const [passwd, setPasswd] = useState("");
+    const [dbOrder, setDbOrder] = useState("");
 
     const connectDB = async () => {
         try {
@@ -28,18 +30,22 @@ const App = () => {
             //   } catch (error) {
             //     console.error('Unable to connect to the database:', error);
             //   }
-            const connection = mysql.createConnection({
-                host: ip,
-                user: userName,
-                password: passwd,
-                database: `orders`
-            });
-            connection.connect();
+            // const connection = mysql.createConnection({
+            //     host: ip,
+            //     user: userName,
+            //     password: passwd,
+            //     database: `orders`
+            // });
+            // connection.connect();
             setConnected(() => true);
         }
         catch (e) {
             console.log(e);
         }
+    }
+
+    const disconnectDB = async () => {
+        setConnected(() => false);
     }
 
     const renderNotConnectedContainer = () => {
@@ -85,6 +91,29 @@ const App = () => {
         )
     };
 
+    const renderConnectedContainer = () => {
+        return (
+            <div>
+                <div className="form-container second-row">
+                    <p>请输入数据库指令：</p>
+                    <div>
+                        <input 
+                        type="text"
+                        value={ip}
+                        placeholder="指令"
+                        onChange={e => setIp(e.target.value)}
+                        />
+                    </div>
+                </div>
+                <div className="connect-DB-container">
+                    <button className="cta-button connect-DB-button" onClick={null}>
+                        开始查询
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="App">
             <div className="container">
@@ -95,12 +124,13 @@ const App = () => {
                             <p className="subtitle">您的外卖专家！😉</p>
                         </div>
                         <div className="right">
-                            <p>登录</p>
+                            <button onClick={disconnectDB}>登录</button>
                         </div>
                     </header>
                 </div>
 
                 {!connected && renderNotConnectedContainer()}
+                {connected && renderConnectedContainer()}
 
                 <div className="footer-container">
                     <a className="footer-text"
