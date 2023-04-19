@@ -48,9 +48,14 @@
     background: black;
     border-radius: 16px;
     padding: 0px 30px;
-    height: 99%;
+    height: 40px;
+    width: 100px;
     margin-right: 10%;
     margin-top: 10px;
+    color: aliceblue;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 40px;
   }
 
   /* 内容样式 */
@@ -133,6 +138,11 @@
     flex-direction: row;
     margin-inline: 10px;
     margin-bottom: 20px;
+  }
+
+  .simple-text {
+    vertical-align: middle;
+    line-height: 10px;
   }
 
   /* 底部样式 */

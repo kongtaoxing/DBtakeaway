@@ -48,6 +48,7 @@ const App = () => {
         setConnected(() => false);
     }
 
+    // 连接框
     const renderNotConnectedContainer = () => {
         return (
             <div>
@@ -91,11 +92,12 @@ const App = () => {
         )
     };
 
+    // 查询框
     const renderConnectedContainer = () => {
         return (
             <div>
                 <div className="form-container second-row">
-                    <p>请输入数据库指令：</p>
+                    <p className="simple-text">请输入数据库指令：</p>
                     <div>
                         <input 
                         type="text"
@@ -123,9 +125,10 @@ const App = () => {
                             <p className="title">快点外卖管理系统</p>
                             <p className="subtitle">您的外卖专家！😉</p>
                         </div>
-                        <div className="right">
-                            <button onClick={disconnectDB}>登录</button>
-                        </div>
+                        {connected ? 
+                        <button className="right" onClick={disconnectDB}>退出</button> :
+                        <button className="right" onClick={connectDB}>登录</button>
+                        }
                     </header>
                 </div>
 
