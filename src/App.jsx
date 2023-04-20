@@ -127,7 +127,7 @@ const App = () => {
         return (
             <div className="form-container">
                 {/* <p>{`查询结果：${JSON.stringify(result)}`}</p> */}
-                <Table striped bordered hover>
+                <Table className="table">
                     <thead>
                         <tr>
                         {Object.keys(result[0]).map((key) => (

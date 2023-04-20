@@ -148,6 +148,10 @@
     line-height: 10px;
   }
 
+  .table {
+    border: 1px solid white;
+  }
+
   /* 底部样式 */
   .footer-container {
     display: flex;
