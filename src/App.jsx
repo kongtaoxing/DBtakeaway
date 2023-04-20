@@ -1,4 +1,6 @@
-import React, {useEffect, useState} from "react";
+import React, { useState } from "react";
+import { Table } from "react-bootstrap";
+import axios from "axios";
 // import mysql from 'mysql2';
 // import { Sequelize } from "sequelize";
 import './App.css';
@@ -12,34 +14,22 @@ const App = () => {
     const [passwd, setPasswd] = useState("");
     const [dbOrder, setDbOrder] = useState("");
     const [showResult, setShowResult] = useState(false);
-    const [result, setResult] = useState("1");
+    const [result, setResult] = useState({});
 
     const connectDB = async () => {
         try {
-            // const connection = new Sequelize(
-            //     'orders',
-            //     userName,
-            //     passwd,
-            //     {
-            //         host: ip,
-            //         port: port,
-            //         dialect: 'mysql'
-            //     }
-            // );
-            // try {
-            //     await connection.authenticate();
-            //     console.log('Connection has been established successfully.');
-            //   } catch (error) {
-            //     console.error('Unable to connect to the database:', error);
-            //   }
-            // const connection = mysql.createConnection({
-            //     host: ip,
-            //     user: userName,
-            //     password: passwd,
-            //     database: `orders`
-            // });
-            // connection.connect();
-            setConnected(() => true);
+            let queryConnectDB = await axios.post(
+                'http://localhost:3000/connectDB',
+                {
+                    url: ip,
+                    port: port,
+                    userName: userName,
+                    passwd: passwd
+                }
+            );
+            if (queryConnectDB.data === 'connected') {
+                setConnected(() => true);
+            }
         }
         catch (e) {
             console.log(e);
@@ -52,6 +42,17 @@ const App = () => {
     }
 
     const queryDB = async () => {
+        try {
+            const queryResult = await axios.post(
+                'http://127.0.0.1:3000/queryDB',
+                {queryData: dbOrder}
+            );
+            console.log(typeof(queryResult.data));
+            setResult(() => queryResult.data);
+        }
+        catch (e) {
+            setResult(() => e);
+        }
         setShowResult(() => true);
     }
 
@@ -108,9 +109,9 @@ const App = () => {
                     <div>
                         <input 
                         type="text"
-                        value={ip}
+                        value={dbOrder}
                         placeholder="指令"
-                        onChange={e => setIp(e.target.value)}
+                        onChange={e => setDbOrder(e.target.value)}
                         />
                     </div>
                 </div>
@@ -127,7 +128,26 @@ const App = () => {
     const renderResultContainer = () => {
         return (
             <div className="form-container">
-                <p>{`查询结果：${result}`}</p>
+                {/* <p>{`查询结果：${JSON.stringify(result)}`}</p> */}
+                <Table striped bordered hover>
+                    <thead>
+                        <tr>
+                        {Object.keys(result[0]).map((key) => (
+                            <th key={key}>{key}</th>
+                        ))}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {result.map((item) => (
+                        <tr key={item.id}>
+                            {Object.keys(item).map((key) => (
+                                <td key={key}>{item[key]}</td>
+                            ))}
+                        </tr>
+                        ))}
+                    </tbody>
+                </Table>
+
             </div>
         )
     }
