@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { Table } from "react-bootstrap";
 import axios from "axios";
-// import mysql from 'mysql2';
-// import { Sequelize } from "sequelize";
-import './App.css';
+import './style/App.css';
 
 const App = () => {
 
