@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-// import * as bs from 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/dist/css/bootstrap.css';
 import { Table } from "react-bootstrap";
 import axios, { AxiosError } from "axios";
 import './style/App.css';
@@ -48,32 +48,56 @@ const App = () => {
                 {queryData: dbOrder}
             );
             console.log('Axios result:', queryResult);
-            try {
-                console.log('query result:', queryResult.data);
-                let errorMsg = queryResult.data['original']['sqlMessage'];
-                // console.log('Error msg:', errorMsg);
-                // setResult(() => ({0: {errorMsg: errorMsg}}, {1: {'_': '_'}}));
-                setErrResult(() => 'Error message: ' + errorMsg);
-                // console.log('Result in queryDB:', result);
+
+            let dbCmd = dbOrder.toLowerCase().slice(0, 4);
+
+            // return value is a table
+            if (dbCmd == 'sele' || dbCmd == 'desc' || dbCmd == 'show' || dbCmd == 'expl') {
+                try {
+                    console.log('query result:', queryResult.data);
+                    let errorMsg = queryResult.data['original']['sqlMessage'];
+                    // console.log('Error msg:', errorMsg);
+                    setErrResult(() => 'Error message: ' + errorMsg);
+                    // console.log('Result in queryDB:', result);
+                }
+                catch (e) {  // MySQL Query Success
+                    setErrResult(() => '');
+                    setResult(() => (queryResult.data));
+                    // useEffect(setResult(() => (queryResult.data)), [queryResult.data])
+                }
             }
-            catch (e) {  // MySQL Query Success
-                setErrResult(() => '');
-                setResult(() => (queryResult.data));
-                // useEffect(setResult(() => (queryResult.data)), [queryResult.data])
+            else {
+                console.log("typeof query result:", typeof(queryResult.data), queryResult.data);
+                if (typeof(queryResult.data) == 'number') {
+                    // Actually `INSERT` success, but return only `0`
+                    setErrResult(() => 'Operating successful!');
+                }
+                else if (typeof(queryResult.data) == 'object') {
+                    // query somehow failed
+                    try {
+                        let errorMsg1 = queryResult.data['parent']['sqlMessage'];
+                        setErrResult(errorMsg1);
+                    }
+                    catch {
+                        setErrResult(() => 'Operating successful!');
+                    }
+                }
+                else {
+                    // Unknown error
+                    setErrResult(() => 'Unkonwn Error.');
+                }
             }
         }
         catch (e) {  // Axios Error
+            console.log('Axios error:', e);
             if (e['isAxiosError']) {
-                // setResult(() => ({0: {AxiosError: e['message']}}, {1: {'_': '_'}}));
                 setErrResult(() => e['message']);
             }
             else {
-                // setResult(() => ({0: {Error: "Unknown"}, 1: {'_': '_'}}));
                 setErrResult(() => 'Error unknown');
             }
         }
         setShowResult(() => true);
-        {showResult && renderResultContainer()}
     }
 
     // 连接框
@@ -185,16 +209,6 @@ const App = () => {
 
     // 实时监听result和errResult的变化
     useEffect(() => {}, [result, errResult]);
-
-    useEffect(() => {
-        const link = document.createElement('link');
-        link.href = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css';
-        link.rel = 'stylesheet';
-        document.head.appendChild(link);
-        return () => {
-          document.head.removeChild(link);
-        }
-      }, []);
 
     return (
         <div className="App">

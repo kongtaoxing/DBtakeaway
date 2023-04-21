@@ -146,6 +146,7 @@
     flex-direction: column;
     vertical-align: middle;
     line-height: 10px;
+    padding-top: 18px;
   }
 
   .table {
