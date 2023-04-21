@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import 'bootstrap/dist/css/bootstrap.css';
 import { Table } from "react-bootstrap";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import './style/App.css';
 
 const App = () => {
