@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import Table from "react-bootstrap/Table";
+// import * as bs from 'bootstrap/dist/css/bootstrap.css';
+import { Table } from "react-bootstrap";
 import axios, { AxiosError } from "axios";
 import './style/App.css';
 
@@ -158,7 +159,7 @@ const App = () => {
             return (
                 <div className="form-container">
                     {/* <p>{`查询结果：${JSON.stringify(result)}`}</p> */}
-                    <Table striped bordered hover variant="dark" className="table">
+                    <Table striped bordered hover variant="dark">
                         <thead>
                             <tr>
                             {Object.keys(result[0]).map((key) => (
@@ -183,9 +184,17 @@ const App = () => {
     }
 
     // 实时监听result和errResult的变化
+    useEffect(() => {}, [result, errResult]);
+
     useEffect(() => {
-        
-    }, [result, errResult]);
+        const link = document.createElement('link');
+        link.href = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css';
+        link.rel = 'stylesheet';
+        document.head.appendChild(link);
+        return () => {
+          document.head.removeChild(link);
+        }
+      }, []);
 
     return (
         <div className="App">
