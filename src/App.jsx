@@ -1,18 +1,19 @@
-import React, { useState } from "react";
-import { Table } from "react-bootstrap";
-import axios from "axios";
+import React, { useEffect, useState } from "react";
+import Table from "react-bootstrap/Table";
+import axios, { AxiosError } from "axios";
 import './style/App.css';
 
 const App = () => {
 
     const [connected, setConnected] = useState(false);
-    const [ip, setIp] = useState("");
-    const [port, setPort] = useState();
-    const [userName, setUserName] = useState("");
-    const [passwd, setPasswd] = useState("");
-    const [dbOrder, setDbOrder] = useState("");
+    const [ip, setIp] = useState("172.24.65.85");
+    const [port, setPort] = useState(3306);
+    const [userName, setUserName] = useState("root");
+    const [passwd, setPasswd] = useState("20281128");
+    const [dbOrder, setDbOrder] = useState("SELECT * FROM rider;");
     const [showResult, setShowResult] = useState(false);
-    const [result, setResult] = useState({});
+    const [result, setResult] = useState({});  // result when success
+    const [errResult, setErrResult] = useState("");  // result when not success
 
     const connectDB = async () => {
         try {
@@ -45,13 +46,33 @@ const App = () => {
                 'http://127.0.0.1:3000/queryDB',
                 {queryData: dbOrder}
             );
-            console.log(typeof(queryResult.data));
-            setResult(() => queryResult.data);
+            console.log('Axios result:', queryResult);
+            try {
+                console.log('query result:', queryResult.data);
+                let errorMsg = queryResult.data['original']['sqlMessage'];
+                // console.log('Error msg:', errorMsg);
+                // setResult(() => ({0: {errorMsg: errorMsg}}, {1: {'_': '_'}}));
+                setErrResult(() => 'Error message: ' + errorMsg);
+                // console.log('Result in queryDB:', result);
+            }
+            catch (e) {  // MySQL Query Success
+                setErrResult(() => '');
+                setResult(() => (queryResult.data));
+                // useEffect(setResult(() => (queryResult.data)), [queryResult.data])
+            }
         }
-        catch (e) {
-            setResult(() => e);
+        catch (e) {  // Axios Error
+            if (e['isAxiosError']) {
+                // setResult(() => ({0: {AxiosError: e['message']}}, {1: {'_': '_'}}));
+                setErrResult(() => e['message']);
+            }
+            else {
+                // setResult(() => ({0: {Error: "Unknown"}, 1: {'_': '_'}}));
+                setErrResult(() => 'Error unknown');
+            }
         }
         setShowResult(() => true);
+        {showResult && renderResultContainer()}
     }
 
     // 连接框
@@ -124,31 +145,47 @@ const App = () => {
 
     // 结果显示
     const renderResultContainer = () => {
-        return (
-            <div className="form-container">
-                {/* <p>{`查询结果：${JSON.stringify(result)}`}</p> */}
-                <Table className="table">
-                    <thead>
-                        <tr>
-                        {Object.keys(result[0]).map((key) => (
-                            <th key={key}>{key}</th>
-                        ))}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {result.map((item) => (
-                        <tr key={item.id}>
-                            {Object.keys(item).map((key) => (
-                                <td key={key}>{item[key]}</td>
+        // console.log('result before form:', result);
+        // console.log('Err msg:', errResult);
+        if (errResult) {
+            return (
+                <div className="form-container">
+                    <p>{errResult}</p>
+                </div>
+            )
+        }
+        else {
+            return (
+                <div className="form-container">
+                    {/* <p>{`查询结果：${JSON.stringify(result)}`}</p> */}
+                    <Table striped bordered hover variant="dark" className="table">
+                        <thead>
+                            <tr>
+                            {Object.keys(result[0]).map((key) => (
+                                <th key={key}>{key}</th>
                             ))}
-                        </tr>
-                        ))}
-                    </tbody>
-                </Table>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {result.map((item) => (
+                            <tr key={item.id}>
+                                {Object.keys(item).map((key) => (
+                                    <td key={key}>{item[key]}</td>
+                                ))}
+                            </tr>
+                            ))}
+                        </tbody>
+                    </Table>
 
-            </div>
-        )
+                </div>
+            )
+        }
     }
+
+    // 实时监听result和errResult的变化
+    useEffect(() => {
+        
+    }, [result, errResult]);
 
     return (
         <div className="App">
