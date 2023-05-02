@@ -4,72 +4,13 @@ import { MyContext } from "./myContext";
 import axios from "axios";
 import './style/App.css';
 import Homepage from "./pages/homepage";
-import { RenderLoginContainer, login, logout } from "./pages/login";
+import RenderLoginContainer from "./pages/login";
 import Signup from "./pages/signup";
 
 const App = () => {
 
     const [connected, setConnected] = useState(false);  // 检查数据库连接情况
     const { logedIn, setLogedIn } = useContext(MyContext);  // 检查登录情况
-
-    const queryDB = async () => {
-        try {
-            const queryResult = await axios.post(
-                'http://127.0.0.1:3000/queryDB',
-                {queryData: dbOrder}
-            );
-            console.log('Axios result:', queryResult);
-
-            let dbCmd = dbOrder.toLowerCase().slice(0, 4);
-
-            // return value is a table
-            if (dbCmd == 'sele' || dbCmd == 'desc' || dbCmd == 'show' || dbCmd == 'expl') {
-                try {
-                    console.log('query result:', queryResult.data);
-                    let errorMsg = queryResult.data['original']['sqlMessage'];
-                    // console.log('Error msg:', errorMsg);
-                    setErrResult(() => 'Error message: ' + errorMsg);
-                    // console.log('Result in queryDB:', result);
-                }
-                catch (e) {  // MySQL Query Success
-                    setErrResult(() => '');
-                    setResult(() => (queryResult.data));
-                    // useEffect(setResult(() => (queryResult.data)), [queryResult.data])
-                }
-            }
-            else {
-                console.log("typeof query result:", typeof(queryResult.data), queryResult.data);
-                if (typeof(queryResult.data) == 'number') {
-                    // Actually `INSERT` success, but return only `0`
-                    setErrResult(() => 'Operating successful!');
-                }
-                else if (typeof(queryResult.data) == 'object') {
-                    // query somehow failed
-                    try {
-                        let errorMsg1 = queryResult.data['parent']['sqlMessage'];
-                        setErrResult(errorMsg1);
-                    }
-                    catch {
-                        setErrResult(() => 'Operating successful!');
-                    }
-                }
-                else {
-                    // Unknown error
-                    setErrResult(() => 'Unkonwn Error.');
-                }
-            }
-        }
-        catch (e) {  // Axios Error
-            console.log('Axios error:', e);
-            if (e['isAxiosError']) {
-                setErrResult(() => e['message']);
-            }
-            else {
-                setErrResult(() => 'Error unknown');
-            }
-        }
-        setShowResult(() => true);
-    }
 
     // 刷新网页链接数据库
     useEffect(() => {
@@ -101,7 +42,7 @@ const App = () => {
                 <div className="header-container">
                     <header>
                         <div className="left">
-                            <p className="title">快点外卖管理系统</p>
+                            <a className="title" href="/">快点外卖管理系统</a>
                             <p className="subtitle">您的外卖专家！😉</p>
                         </div>
                         {logedIn ? 

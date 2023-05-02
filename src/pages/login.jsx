@@ -1,6 +1,18 @@
-import React from "react";
+import React, { useContext } from "react";
+import { MyContext } from "../myContext";
 
-const RenderLoginContainer = () => {
+const parentComponent = () => {
+    const { logedIn, setLogedIn } = useContext(MyContext);
+    return (
+        <>
+            <RenderLoginContainer logedIn={logedIn} setLogedIn={setLogedIn} />
+            <login logedIn={logedIn} setLogedIn={setLogedIn} />
+            <logout logedIn={logedIn} setLogedIn={setLogedIn} />
+        </>
+    );
+};
+
+const RenderLoginContainer = (props) => {
     return (
         <div>
             <p>Log in, please.</p>
@@ -8,12 +20,12 @@ const RenderLoginContainer = () => {
     )
 }
 
-const login = async () => {
+const login = async (props) => {
     // 
 }
 
-const logout = async () => {
+const logout = async (props) => {
     // 
 }
 
-export {RenderLoginContainer, login, logout};
+export default RenderLoginContainer;

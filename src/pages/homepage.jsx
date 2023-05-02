@@ -8,11 +8,26 @@ const Homepage = () => {
         <div className="form-container">
             <img alt="Homepage image" src="./src/home.png"/>
             {
-                logedIn ?
-                <button>Sonta-Ha!</button> :
-                <button onClick={() => window.location.href="/login"} className="cta-button connect-DB-button">
-                登录
-                </button>
+                logedIn 
+                ?
+                <button onClick={null} className="cta-button connect-DB-button">
+                    Sonta-Ha!
+                </button> 
+                :
+                <div>
+                    <button 
+                    onClick={() => window.location.href="/login"} 
+                    className="cta-button connect-DB-button"
+                    >
+                        登录
+                    </button>
+                    <button 
+                    onClick={() => window.location.href="/signup"} 
+                    className="cta-button connect-DB-button"
+                    >
+                        注册
+                    </button>
+                </div>
             }
         </div>
     )

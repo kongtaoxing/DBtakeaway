@@ -72,11 +72,16 @@
     width: auto;
     padding-left: 40px;
     padding-right: 40px;
+    margin-right: 30px;
     border-radius: 10px;
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
     color: white;
+  }
+
+  .cta-button:last-child {
+    margin-right: 0;
   }
 
   .connect-DB-button {
@@ -127,6 +132,8 @@
 
   img {
     padding-bottom: 20px;
+    width: 35%;
+    height: auto;
   }
 
   .first-row{
@@ -136,6 +143,7 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
+    margin-right: 20px;
   }
 
   .second-row{
@@ -155,6 +163,16 @@
 
   .table {
     border: 1px solid white;
+  }
+
+  .form-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  label {
+    width: 100px;
   }
 
   /* 底部样式 */
