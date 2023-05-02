@@ -98,51 +98,51 @@ const App = () => {
             }
         }
         setShowResult(() => true);
-    }
+    // }
 
-    // 连接框
-    const renderNotConnectedContainer = () => {
-        return (
-            <div>
-                <div className="form-container">
-                    <div className="first-row">
-                        <input 
-                        type="text"
-                        value={ip}
-                        placeholder="数据库IP地址"
-                        onChange={e => setIp(e.target.value)}
-                        />
-                        <input 
-                        type="text"
-                        value={port}
-                        placeholder="端口号"
-                        onChange={e => setPort(e.target.value)}
-                        />
-                    </div>
-                    <div className="first-row">
-                        <input 
-                        type="text"
-                        value={userName}
-                        placeholder="用户名"
-                        onChange={e => setUserName(e.target.value)}
-                        />
-                        <input 
-                        type="password"
-                        value={passwd}
-                        placeholder="密码"
-                        onChange={e => setPasswd(e.target.value)}
-                        />
-                    </div>
+    // // 连接框
+    // const renderNotConnectedContainer = () => {
+    //     return (
+    //         <div>
+    //             <div className="form-container">
+    //                 <div className="first-row">
+    //                     <input 
+    //                     type="text"
+    //                     value={ip}
+    //                     placeholder="数据库IP地址"
+    //                     onChange={e => setIp(e.target.value)}
+    //                     />
+    //                     <input 
+    //                     type="text"
+    //                     value={port}
+    //                     placeholder="端口号"
+    //                     onChange={e => setPort(e.target.value)}
+    //                     />
+    //                 </div>
+    //                 <div className="first-row">
+    //                     <input 
+    //                     type="text"
+    //                     value={userName}
+    //                     placeholder="用户名"
+    //                     onChange={e => setUserName(e.target.value)}
+    //                     />
+    //                     <input 
+    //                     type="password"
+    //                     value={passwd}
+    //                     placeholder="密码"
+    //                     onChange={e => setPasswd(e.target.value)}
+    //                     />
+    //                 </div>
 
-                </div>
-                <div className="connect-DB-container">
-                    <button className="cta-button connect-DB-button" onClick={connectDB}>
-                        连接数据库
-                    </button>
-                </div>
-            </div>
-        )
-    };
+    //             </div>
+    //             <div className="connect-DB-container">
+    //                 <button className="cta-button connect-DB-button" onClick={connectDB}>
+    //                     连接数据库
+    //                 </button>
+    //             </div>
+    //         </div>
+    //     )
+    // };
 
     // 查询框
     const renderConnectedContainer = () => {
