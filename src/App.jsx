@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { MyContext } from "./myContext";
 import axios from "axios";
 import './style/App.css';
 import Homepage from "./pages/homepage";
@@ -9,7 +10,7 @@ import Signup from "./pages/signup";
 const App = () => {
 
     const [connected, setConnected] = useState(false);  // 检查数据库连接情况
-    const [logedIn, setLogedIn] = useState(false);  // 检查登录情况
+    const { logedIn, setLogedIn } = useContext(MyContext);  // 检查登录情况
 
     const queryDB = async () => {
         try {
