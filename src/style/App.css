@@ -125,6 +125,10 @@
     outline: none;
   }
 
+  img {
+    padding-bottom: 20px;
+  }
+
   .first-row{
     position: relative;
     display: flex;

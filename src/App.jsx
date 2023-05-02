@@ -1,45 +1,15 @@
 import React, { useEffect, useState } from "react";
-import 'bootstrap/dist/css/bootstrap.css';
-import { Table } from "react-bootstrap";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import axios from "axios";
 import './style/App.css';
+import Homepage from "./pages/homepage";
+import { RenderLoginContainer, login, logout } from "./pages/login";
+import Signup from "./pages/signup";
 
 const App = () => {
 
-    const [connected, setConnected] = useState(false);
-    const [ip, setIp] = useState("172.24.65.85");
-    const [port, setPort] = useState(3306);
-    const [userName, setUserName] = useState("root");
-    const [passwd, setPasswd] = useState("20281128");
-    const [dbOrder, setDbOrder] = useState("SELECT * FROM rider;");
-    const [showResult, setShowResult] = useState(false);
-    const [result, setResult] = useState({});  // result when success
-    const [errResult, setErrResult] = useState("");  // result when not success
-
-    const connectDB = async () => {
-        try {
-            let queryConnectDB = await axios.post(
-                'http://localhost:3000/connectDB',
-                {
-                    url: ip,
-                    port: port,
-                    userName: userName,
-                    passwd: passwd
-                }
-            );
-            if (queryConnectDB.data === 'connected') {
-                setConnected(() => true);
-            }
-        }
-        catch (e) {
-            console.log(e);
-        }
-    }
-
-    const disconnectDB = async () => {
-        setConnected(() => false);
-        setShowResult(() => false);
-    }
+    const [connected, setConnected] = useState(false);  // 检查数据库连接情况
+    const [logedIn, setLogedIn] = useState(false);  // 检查登录情况
 
     const queryDB = async () => {
         try {
@@ -98,117 +68,31 @@ const App = () => {
             }
         }
         setShowResult(() => true);
-    // }
-
-    // // 连接框
-    // const renderNotConnectedContainer = () => {
-    //     return (
-    //         <div>
-    //             <div className="form-container">
-    //                 <div className="first-row">
-    //                     <input 
-    //                     type="text"
-    //                     value={ip}
-    //                     placeholder="数据库IP地址"
-    //                     onChange={e => setIp(e.target.value)}
-    //                     />
-    //                     <input 
-    //                     type="text"
-    //                     value={port}
-    //                     placeholder="端口号"
-    //                     onChange={e => setPort(e.target.value)}
-    //                     />
-    //                 </div>
-    //                 <div className="first-row">
-    //                     <input 
-    //                     type="text"
-    //                     value={userName}
-    //                     placeholder="用户名"
-    //                     onChange={e => setUserName(e.target.value)}
-    //                     />
-    //                     <input 
-    //                     type="password"
-    //                     value={passwd}
-    //                     placeholder="密码"
-    //                     onChange={e => setPasswd(e.target.value)}
-    //                     />
-    //                 </div>
-
-    //             </div>
-    //             <div className="connect-DB-container">
-    //                 <button className="cta-button connect-DB-button" onClick={connectDB}>
-    //                     连接数据库
-    //                 </button>
-    //             </div>
-    //         </div>
-    //     )
-    // };
-
-    // 查询框
-    const renderConnectedContainer = () => {
-        return (
-            <div className="form-container">
-                <div className="second-row">
-                    <p className="simple-text">请输入数据库指令：</p>
-                    <div>
-                        <input 
-                        type="text"
-                        value={dbOrder}
-                        placeholder="指令"
-                        onChange={e => setDbOrder(e.target.value)}
-                        />
-                    </div>
-                </div>
-                <div className="connect-DB-container">
-                    <button className="cta-button connect-DB-button" onClick={queryDB}>
-                        开始查询
-                    </button>
-                </div>
-            </div>
-        );
     }
 
-    // 结果显示
-    const renderResultContainer = () => {
-        // console.log('result before form:', result);
-        // console.log('Err msg:', errResult);
-        if (errResult) {
-            return (
-                <div className="form-container">
-                    <p>{errResult}</p>
-                </div>
-            )
+    // 刷新网页链接数据库
+    useEffect(() => {
+        async function fetchDB() {
+            try {
+                let queryConnectDB = await axios.post(
+                    'http://localhost:3000/connectDB',
+                    {
+                        url: "172.24.65.85",
+                        port: 3306,
+                        userName: "root",
+                        passwd: "20281128"
+                    }
+                );
+                if (queryConnectDB.data === 'connected') {
+                    setConnected(() => true);
+                }
+            }
+            catch (e) {
+                console.log(e);
+            }
         }
-        else {
-            return (
-                <div className="form-container">
-                    {/* <p>{`查询结果：${JSON.stringify(result)}`}</p> */}
-                    <Table striped bordered hover variant="dark">
-                        <thead>
-                            <tr>
-                            {Object.keys(result[0]).map((key) => (
-                                <th key={key}>{key}</th>
-                            ))}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {result.map((item) => (
-                            <tr key={item.id}>
-                                {Object.keys(item).map((key) => (
-                                    <td key={key}>{item[key]}</td>
-                                ))}
-                            </tr>
-                            ))}
-                        </tbody>
-                    </Table>
-
-                </div>
-            )
-        }
-    }
-
-    // 实时监听result和errResult的变化
-    useEffect(() => {}, [result, errResult]);
+        fetchDB();
+    }, []);
 
     return (
         <div className="App">
@@ -219,16 +103,20 @@ const App = () => {
                             <p className="title">快点外卖管理系统</p>
                             <p className="subtitle">您的外卖专家！😉</p>
                         </div>
-                        {connected ? 
-                        <button className="right" onClick={disconnectDB}>退出</button> :
-                        <button className="right" onClick={connectDB}>登录</button>
+                        {logedIn ? 
+                        <button className="right" onClick={() => setLogedIn(() => false)}>退出</button> :
+                        <button className="right" onClick={() => window.location.href="/login"}>登录</button>
                         }
                     </header>
                 </div>
 
-                {!connected && renderNotConnectedContainer()}
-                {connected && renderConnectedContainer()}
-                {showResult && renderResultContainer()}
+                <Router>
+                    <Routes>
+                    <Route exact path='/' element={<Homepage/>} />
+                    <Route path="/login" element={<RenderLoginContainer/>}/>
+                    <Route path="/signup" element={<Signup/>}/>
+                    </Routes>
+                </Router>
 
                 <div className="footer-container">
                     <a className="footer-text"
