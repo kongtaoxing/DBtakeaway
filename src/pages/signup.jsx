@@ -7,6 +7,7 @@ const Signup = () => {
     const [passwd, setPasswd] = useState("");
     const [repasswd, setRepasswd] = useState("");
     const [registered, setRegistered] = useState(false);
+    const [returnError, setReturnError] = useState(false);
 
     const signup = async () => {
         try {
@@ -20,9 +21,13 @@ const Signup = () => {
             if (signupData.data === 'success') {
                 setRegistered(() => true);
             }
+            else {
+                setReturnError(true);
+            }
         }
         catch (e) {
             console.log(e);
+            setReturnError(true);
         };
     }
 
@@ -43,9 +48,17 @@ const Signup = () => {
                 <p>密码需要包含字母数字和特殊字符，并且至少8位！</p>
             );
         }
+        else if (returnError) {
+            return (
+                <div>注册失败，请联系网站管理员！</div>
+            );
+        }
         else if (registered == true) {
             return (
-                <p>注册成功！</p>
+                <div className="first-row">
+                    <p>注册成功！前往</p>
+                    <a href="/login">登录</a>
+                </div>
             )
         }
         return (<div></div>);
