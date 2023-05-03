@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { MyContext } from "../myContext";
 
 const RenderLoginContainer = () => {
@@ -7,6 +8,14 @@ const RenderLoginContainer = () => {
     const { logedIn, setLogedIn } = useContext(MyContext);
     const [phoneNumber, setPhoneNumber] = useState("");
     const [passwd, setPasswd] = useState("");
+    const [errorMsg, setErrorMsg] = useState("");
+    const navigate = useNavigate();
+
+    const hints = () => {
+        return (
+            <p>{errorMsg}</p>
+        )
+    }
 
     const login = async () => {
         try {
@@ -17,13 +26,20 @@ const RenderLoginContainer = () => {
                     passwd: passwd
                 }
             );
-            if (signinData.data == 'success') {
-                setLogedIn(true);
-                console.log(logedIn);
+            if (signinData.data['errorMsg'] == 'success') {
+                setLogedIn(() => true);
+                localStorage.setItem('loginStatus', true);
+                localStorage.setItem('user', JSON.stringify(signinData.data['user']));
+                console.log(signinData.data['user']);
+                navigate('/profile');
+            }
+            else {
+                setErrorMsg(() => signinData.data['errorMsg']);
             }
         }
         catch (e) {
             console.log(e);
+            setErrorMsg(() => String(e))
         }
     }
     
@@ -54,6 +70,7 @@ const RenderLoginContainer = () => {
                 />
             </div><br></br>
             <button className="cta-button connect-DB-button" onClick={login}>登录</button>
+            {hints()}
         </div>
     )
 }
