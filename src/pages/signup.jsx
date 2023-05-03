@@ -3,7 +3,7 @@ import React, { useState } from "react";
 
 const Signup = () => {
 
-    const [userName, setUserName] = useState("");
+    const [phoneNumber, setPhoneNumber] = useState("");
     const [passwd, setPasswd] = useState("");
     const [repasswd, setRepasswd] = useState("");
     const [registered, setRegistered] = useState(false);
@@ -13,7 +13,7 @@ const Signup = () => {
             const signupData = await axios.post(
                 "http://localhost:3000/api/signup",
                 {
-                    userName: userName,
+                    phoneNumber: phoneNumber,
                     passwd: passwd,
                 }
             );
@@ -27,7 +27,7 @@ const Signup = () => {
     }
 
     const hints = () => {
-        console.log(userName, passwd, repasswd);
+        console.log(phoneNumber, passwd, repasswd);
         // 密码需要包含字母数字和特殊字符，并且至少8位
         const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
         const safePasswd = regex.test(passwd);
@@ -54,13 +54,13 @@ const Signup = () => {
     return (
         <div className="form-container">
             <div className="form-group">
-                <label htmlFor="input1">用户名：</label>
+                <label htmlFor="input1">手机号：</label>
                 <input 
                 type="text" 
                 id="input1"
                 placeholder="" 
-                value={userName} 
-                onChange={e => setUserName(e.target.value)} 
+                value={phoneNumber} 
+                onChange={e => setPhoneNumber(e.target.value)} 
                 />
             </div><br></br>
             <div className="form-group">

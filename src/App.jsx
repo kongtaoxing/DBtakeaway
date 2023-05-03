@@ -17,7 +17,7 @@ const App = () => {
         async function fetchDB() {
             try {
                 let queryConnectDB = await axios.post(
-                    'http://localhost:3000/connectDB',
+                    'http://localhost:3000/api/connectDB',
                     {
                         url: "172.24.65.85",
                         port: 3306,
