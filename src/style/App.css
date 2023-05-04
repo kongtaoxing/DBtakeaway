@@ -203,3 +203,29 @@
   .ant-form-item-control-input-content {
     color: white;
   }
+
+ .ant-menu {
+    background-color: #181818;
+    font-size: 16px;
+  }
+
+  .anticon-menu-unfold {
+    font-size: 35px !important;
+  }
+
+  .ant-empty-description {
+    color: white !important;
+  }
+
+  .ant-modal-title,
+  .ant-modal-content {
+    background-color: #181818 !important;
+    color:rgb(255, 255, 255) !important
+  }
+
+  .ant-input-affix-wrapper,
+  .ant-input-password-icon,
+  .ant-input {
+    background-color:#0d1116 !important;
+    color: white !important
+  }

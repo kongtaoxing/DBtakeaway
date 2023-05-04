@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import { FireTwoTone } from "@ant-design/icons"
 import { MyContext } from "../myContext";
 
 const Homepage = () => {
@@ -10,8 +11,8 @@ const Homepage = () => {
             {
                 logedIn 
                 ?
-                <button onClick={null} className="cta-button connect-DB-button">
-                    Sonta-Ha!
+                <button onClick={() => window.location.href="/menu"} className="cta-button connect-DB-button">
+                    <FireTwoTone twoToneColor="red" spin={true}/>热门菜品
                 </button> 
                 :
                 <div>

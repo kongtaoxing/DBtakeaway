@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Input, Form, Button, Avatar } from "antd";
+import { Input, Form, Button, Avatar, Modal } from "antd";
 import { UserOutlined, PhoneOutlined, HomeOutlined } from "@ant-design/icons";
 import { toast, Toaster } from "react-hot-toast";
 import axios from "axios";
@@ -22,6 +22,7 @@ const Profile = () => {
         )
     }
     else {
+        // 个人信息相关变量以及函数
         const [form] = Form.useForm();
         const user = JSON.parse(localStorage["user"]);
         const [editFields, setEditFields] = useState({
@@ -79,6 +80,26 @@ const Profile = () => {
                 toast.error('网络错误，请检查网络');
             }
         };
+
+        // 修改密码的modal变量及相关函数
+        const [openModal, setOpenModal] = useState(false);
+        const [confirmLoading, setConfirmLoading] = useState(false);
+
+        const showModal = async () => {
+            setOpenModal(() => true);
+        }
+        
+        const handleOk = async () => {
+            setConfirmLoading(() => true);
+            setTimeout(() => {
+                setOpenModal(() => false);
+                setConfirmLoading(() => false);
+            }, 5000);
+        };
+
+        const handleCancel = async () => {
+            setOpenModal(() => false);
+        }
 
         useEffect(
             () => {
@@ -159,10 +180,77 @@ const Profile = () => {
                     </Form.Item>
                     </Form>
                     <Toaster/>
-                    <Button type="primary" block className="connect-DB-button">
+                    <Button type="primary" block className="connect-DB-button" onClick={showModal}>
                     修改密码
                     </Button>
                 </div>
+                <Modal
+                    title="title"
+                    open={openModal}
+                    onOk={handleOk}
+                    confirmLoading={confirmLoading}
+                    onCancel={handleCancel}
+                >
+                    <Form
+                        name="basic"
+                        labelCol={{span: 8,}}
+                        wrapperCol={{span: 16,}}
+                        style={{maxWidth: 600}}
+                        onFinish={null}
+                        onFinishFailed={null}
+                    >
+                        <Form.Item
+                        label="原密码"
+                        name="username"
+                        rules={[
+                            {
+                            required: true,
+                            message: '请输入原密码!',
+                            },
+                        ]}
+                        >
+                        <Input.Password />
+                        </Form.Item>
+
+                        <Form.Item
+                        label="新密码"
+                        name="password"
+                        rules={[
+                            {
+                            required: true,
+                            message: '请输入新密码!',
+                            },
+                        ]}
+                        >
+                        <Input.Password />
+                        </Form.Item>
+
+                        <Form.Item
+                        label="确认密码"
+                        name="repassword"
+                        rules={[
+                            {
+                            required: true,
+                            message: '请确认密码!',
+                            },
+                        ]}
+                        >
+                        <Input.Password />
+                        </Form.Item>
+{/* 
+                        <Form.Item
+                        wrapperCol={{
+                            offset: 8,
+                            span: 16,
+                        }}
+                        >
+                        <Button type="primary" htmlType="submit">
+                            Submit
+                        </Button>
+                        </Form.Item> */}
+                    </Form>
+                </Modal>
+
             </div>
         );
     };
