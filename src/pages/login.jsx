@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useContext, useState } from "react";
+import  { toast, Toaster }  from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { MyContext } from "../myContext";
 
@@ -31,9 +32,11 @@ const RenderLoginContainer = () => {
                 localStorage.setItem('loginStatus', true);
                 localStorage.setItem('user', JSON.stringify(signinData.data['user']));
                 console.log(signinData.data['user']);
+                toast.success("登录成功！正在跳转个人主页...");
                 navigate('/profile');
             }
             else {
+                toast.error(signinData.data['errorMsg']);
                 setErrorMsg(() => signinData.data['errorMsg']);
             }
         }
@@ -70,6 +73,7 @@ const RenderLoginContainer = () => {
                 />
             </div><br></br>
             <button className="cta-button connect-DB-button" onClick={login}>登录</button>
+            <Toaster/>
             {hints()}
         </div>
     )

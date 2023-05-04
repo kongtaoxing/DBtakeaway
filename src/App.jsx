@@ -8,6 +8,7 @@ import RenderLoginContainer from "./pages/login";
 import Signup from "./pages/signup";
 import Profile from "./pages/profile";
 import Menu from "./pages/menu";
+import { toast, Toaster } from "react-hot-toast";
 
 const App = () => {
 
@@ -16,6 +17,7 @@ const App = () => {
 
     const logout = async () => {
         setLogedIn(() => false);
+        toast.success("退出成功！");
         localStorage.removeItem('loginStatus');
         localStorage.removeItem('user');
     }
@@ -62,6 +64,7 @@ const App = () => {
                         }
                     </header>
                 </div>
+                <Toaster/>
 
                 <Router>
                     <Routes>
