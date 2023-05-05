@@ -6,24 +6,29 @@ const Orders = () => {
     const items = [
         {
           key: '1',
-          label: `Tab 1`,
+          label: `未完成订单`,
           children: `Content of Tab Pane 1`,
         },
         {
           key: '2',
-          label: `Tab 2`,
+          label: `已完成订单`,
           children: `Content of Tab Pane 2`,
         },
         {
           key: '3',
-          label: `Tab 3`,
+          label: `全部`,
           children: `Content of Tab Pane 3`,
         },
       ];
 
     return (
-        <div className="form-container">
-            <Tabs defaultActiveKey="1" items={items} onChange={null} />
+        <div className="form">
+            <Tabs
+                defaultActiveKey="1"
+                type="card"
+                // size={size}
+                items={items}
+              />
         </div>
     )
 }

@@ -1,25 +1,36 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { lazy, Suspense, useContext, useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { MyContext } from "./myContext";
 import axios from "axios";
 import './style/App.css';
-import Homepage from "./pages/homepage";
-import RenderLoginContainer from "./pages/login";
-import Signup from "./pages/signup";
-import Profile from "./pages/profile";
-import Menupage from "./pages/menu";
-import Orders from "./pages/orders";
-import NotFound from "./pages/notfound";
+// import Homepage from "./pages/homepage";
+// import RenderLoginContainer from "./pages/login";
+// import Signup from "./pages/signup";
+// import Profile from "./pages/profile";
+// import Menupage from "./pages/menu";
+// import Orders from "./pages/orders";
+// import NotFound from "./pages/notfound";
 import { toast, Toaster } from "react-hot-toast";
 import { 
     MailOutlined, 
     ProfileOutlined, 
     ShopOutlined,
     LoginOutlined,
+    LogoutOutlined,
     MenuUnfoldOutlined,
-    UserOutlined
+    UserOutlined,
+    HomeOutlined
 } from "@ant-design/icons";
-import { Menu } from "antd";
+import { Menu, Spin } from "antd";
+
+// 使用lasy+Suspense方式动态import其他页面模块，防止chunk过大影响加载
+const Homepage = lazy(() => import('./pages/homepage'));
+const RenderLoginContainer = lazy(() => import('./pages/login'));
+const Signup = lazy(() => import('./pages/signup'));
+const Profile = lazy(() => import('./pages/profile'));
+const Menupage = lazy(() => import('./pages/menu'));
+const Orders = lazy(() => import('./pages/orders'));
+const NotFound = lazy(() => import('./pages/notfound'));
 
 
 const App = () => {
@@ -36,6 +47,13 @@ const App = () => {
 
     // 菜单栏
     const items = [
+        {
+            label: (
+                <a href="/">主页</a>
+            ),
+            key: 'home',
+            icon: <HomeOutlined/>
+        },
         {
           label: (
             <a href="/menu" target="_blank" rel="noopener noreferrer">
@@ -69,7 +87,7 @@ const App = () => {
                 logedIn ? <a onClick={logout}>退出</a> : <a href="/login">登录</a>
             ),
             key: 'loginOrOut',
-            icon: <LoginOutlined/>
+            icon: logedIn ? <LogoutOutlined/> : <LoginOutlined/>
         }
       ];
 
@@ -119,15 +137,17 @@ const App = () => {
                 <Toaster/>
 
                 <Router>
-                    <Routes>
-                    <Route exact path='/' element={<Homepage/>} />
-                    <Route path="/login" element={<RenderLoginContainer/>}/>
-                    <Route path="/signup" element={<Signup/>}/>
-                    <Route path="/profile" element={<Profile/>}/>
-                    <Route path="/menu" element={<Menupage/>}/>
-                    <Route path="/orders" element={<Orders/>}/>
-                    <Route path="*" element={<NotFound/>}/>
-                    </Routes>
+                    <Suspense fallback={<Spin/>}>
+                        <Routes>
+                        <Route exact path='/' element={<Homepage/>} />
+                        <Route path="/login" element={<RenderLoginContainer/>}/>
+                        <Route path="/signup" element={<Signup/>}/>
+                        <Route path="/profile" element={<Profile/>}/>
+                        <Route path="/menu" element={<Menupage/>}/>
+                        <Route path="/orders" element={<Orders/>}/>
+                        <Route path="*" element={<NotFound/>}/>
+                        </Routes>
+                    </Suspense>
                 </Router>
 
                 <div className="footer-container">

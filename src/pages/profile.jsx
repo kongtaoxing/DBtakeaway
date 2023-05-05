@@ -84,6 +84,7 @@ const Profile = () => {
         // 修改密码的modal变量及相关函数
         const [openModal, setOpenModal] = useState(false);
         const [confirmLoading, setConfirmLoading] = useState(false);
+        const [passwdForm] = Form.useForm();
 
         const showModal = async () => {
             setOpenModal(() => true);
@@ -91,10 +92,42 @@ const Profile = () => {
         
         const handleOk = async () => {
             setConfirmLoading(() => true);
-            setTimeout(() => {
-                setOpenModal(() => false);
-                setConfirmLoading(() => false);
-            }, 5000);
+            let newValues = await passwdForm.validateFields()
+            passwdForm.resetFields();
+            console.log(newValues);
+            if (newValues['password'] != newValues['repassword']) {
+                toast.error("两次输入的密码不一致！");
+            }
+            else if (newValues['oldpass'] == newValues['password']) {
+                toast.error("新密码不能与旧密码相同！");
+            }
+            else {
+                try {
+                    let changepsd = await axios.post(
+                        "http://localhost:3000/api/changePasswd", 
+                        {
+                            id: user[0]['id'],
+                            oldpasswd: newValues['oldpass'],
+                            passwd: newValues['password'],
+                            repasswd: newValues['repassword']
+                        }
+                    );
+                    if (changepsd.data['message'] == "success") {
+                        toast.success("修改成功！");
+                    }
+                    else if (changepsd.data['message'] == "error") {
+                        toast.error(changepsd.data['data']);
+                    }
+                    else {
+                        toast.error("修改失败！");
+                    }
+                }
+                catch (e) {
+                    toast.error("网络错误！");
+                    setConfirmLoading(() => false);
+                }
+            }
+            setConfirmLoading(() => false);
         };
 
         const handleCancel = async () => {
@@ -109,6 +142,7 @@ const Profile = () => {
 
         return (
             <div className="form-container" onClick={null}>
+                <Toaster/>
                 <div style={{ width: "60%", minWidth: "500px", maxWidth: "800px" }}>
                     <div style={{ display: "flex", alignItems: "center", marginBottom: "20px" }}>
                         <Avatar size={64} icon={<UserOutlined />} />
@@ -179,19 +213,21 @@ const Profile = () => {
                         }
                     </Form.Item>
                     </Form>
-                    <Toaster/>
                     <Button type="primary" block className="connect-DB-button" onClick={showModal}>
                     修改密码
                     </Button>
                 </div>
                 <Modal
-                    title="title"
+                    title="修改密码"
                     open={openModal}
                     onOk={handleOk}
                     confirmLoading={confirmLoading}
                     onCancel={handleCancel}
+                    okText="确认修改"
+                    cancelText="取消"
                 >
                     <Form
+                        form={passwdForm}
                         name="basic"
                         labelCol={{span: 8,}}
                         wrapperCol={{span: 16,}}
@@ -201,7 +237,7 @@ const Profile = () => {
                     >
                         <Form.Item
                         label="原密码"
-                        name="username"
+                        name="oldpass"
                         rules={[
                             {
                             required: true,
@@ -217,9 +253,13 @@ const Profile = () => {
                         name="password"
                         rules={[
                             {
-                            required: true,
-                            message: '请输入新密码!',
+                                required: true,
+                                message: '请输入新密码!',
                             },
+                            {
+                                pattern: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
+                                message: "密码应包含字母、数字和特殊字符，并且至少8位"
+                            }
                         ]}
                         >
                         <Input.Password />
@@ -237,20 +277,8 @@ const Profile = () => {
                         >
                         <Input.Password />
                         </Form.Item>
-{/* 
-                        <Form.Item
-                        wrapperCol={{
-                            offset: 8,
-                            span: 16,
-                        }}
-                        >
-                        <Button type="primary" htmlType="submit">
-                            Submit
-                        </Button>
-                        </Form.Item> */}
                     </Form>
                 </Modal>
-
             </div>
         );
     };

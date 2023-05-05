@@ -90,6 +90,7 @@
     margin-right: 0;
   }
 
+  .ant-btn-primary,
   .connect-DB-button {
     background-image: linear-gradient(
       to right,
@@ -209,8 +210,11 @@
     font-size: 16px;
   }
 
+  .ant-menu-overflow,
+  .ant-menu-horizontal,
   .anticon-menu-unfold {
     font-size: 35px !important;
+    background-color: #181818 !important;
   }
 
   .ant-empty-description {
@@ -223,6 +227,13 @@
     color:rgb(255, 255, 255) !important
   }
 
+  .ant-menu-submenu-popup,
+  .ant-menu-submenu,
+  .ant-menu-item,
+  .ant-menu-submenu-placement-bottomLeft,
+  .ant-menu-vertical,
+  .ant-tabs,
+  .ant-tabs-top,
   .ant-input-affix-wrapper,
   .ant-input-password-icon,
   .ant-input {
