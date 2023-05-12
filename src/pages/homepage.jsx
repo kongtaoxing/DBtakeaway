@@ -1,13 +1,14 @@
 import React, { useContext } from "react";
 import { FireTwoTone } from "@ant-design/icons"
 import { MyContext } from "../myContext";
+import homeImage from "/src/home.png";
 
 const Homepage = () => {
 
     const { logedIn, setLogedIn } = useContext(MyContext);
     return (
         <div className="form-container">
-            <img alt="Homepage image" src="./src/home.png"/>
+            <img alt="Homepage image" src={homeImage}/>
             {
                 logedIn 
                 ?
