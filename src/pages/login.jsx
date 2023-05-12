@@ -4,6 +4,8 @@ import  { toast, Toaster }  from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { MyContext } from "../myContext";
 
+import baseUrl from "../url";
+
 const RenderLoginContainer = () => {
 
     const { logedIn, setLogedIn } = useContext(MyContext);
@@ -21,7 +23,7 @@ const RenderLoginContainer = () => {
     const login = async () => {
         try {
             const signinData = await axios.post(
-                "http://localhost:3000/api/login",
+                baseUrl + "/api/login",
                 {
                     phoneNumber: phoneNumber,
                     passwd: passwd

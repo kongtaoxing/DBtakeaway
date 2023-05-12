@@ -23,6 +23,8 @@ import {
 } from "@ant-design/icons";
 import { Menu, Spin } from "antd";
 
+import baseUrl from "./url";
+
 // 使用lasy+Suspense方式动态import其他页面模块，防止chunk过大影响加载
 const Homepage = lazy(() => import('./pages/homepage'));
 const RenderLoginContainer = lazy(() => import('./pages/login'));
@@ -99,7 +101,7 @@ const App = () => {
         async function fetchDB() {
             try {
                 let queryConnectDB = await axios.post(
-                    'http://localhost:3000/api/connectDB',
+                    baseUrl + '/api/connectDB',
                     {
                         url: "172.24.65.85",
                         port: 3306,

@@ -1,6 +1,8 @@
 import axios from "axios";
 import React, { useState } from "react";
 
+import baseUrl from "../url";
+
 const Signup = () => {
 
     const [phoneNumber, setPhoneNumber] = useState("");
@@ -12,7 +14,7 @@ const Signup = () => {
     const signup = async () => {
         try {
             const signupData = await axios.post(
-                "http://localhost:3000/api/signup",
+                baseUrl + "/api/signup",
                 {
                     phoneNumber: phoneNumber,
                     passwd: passwd,
