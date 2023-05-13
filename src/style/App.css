@@ -102,6 +102,20 @@
     padding-block: 10px;
   }
 
+  textarea {
+    border: 0;
+    border-radius: 12px;
+    background-color: black;
+    color: white;
+    letter-spacing: 1px;
+    font-size: 13px;
+    width: 300px;
+    margin-bottom: 10px;
+    padding: 10px 20px;
+    text-align: center;
+    margin-inline: 10px;
+  }
+
   input{
     border: 0;
     border-radius: 12px;

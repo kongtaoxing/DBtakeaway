@@ -52,7 +52,7 @@ const App = () => {
             let dbCmd = dbOrder.toLowerCase().slice(0, 4);
 
             // return value is a table
-            if (dbCmd == 'sele' || dbCmd == 'desc' || dbCmd == 'show' || dbCmd == 'expl') {
+            if (dbCmd == 'sele' || dbCmd == 'desc' || dbCmd == 'show' || dbCmd == 'expl' || dbCmd == 'call') {
                 try {
                     console.log('query result:', queryResult.data);
                     let errorMsg = queryResult.data['original']['sqlMessage'];
@@ -61,9 +61,21 @@ const App = () => {
                     // console.log('Result in queryDB:', result);
                 }
                 catch (e) {  // MySQL Query Success
-                    setErrResult(() => '');
-                    setResult(() => (queryResult.data));
-                    // useEffect(setResult(() => (queryResult.data)), [queryResult.data])
+                    if (dbCmd == 'call') {
+                        setErrResult(() => '');
+                        setResult(() => ([queryResult.data]));
+                    }
+                    else {
+                        setErrResult(() => '');
+                        let tempData = queryResult.data;
+                        if (tempData[0].hasOwnProperty('passwd')) {
+                            for (let i = 0; i < tempData.length; i++) {
+                                tempData[i]['passwd'] = '0x' + tempData[i]['passwd']['data'].map(num => num.toString(16).padStart(2, '0')).join('');
+                            }
+                        }
+                        setResult(() => (tempData));
+                        // useEffect(setResult(() => (queryResult.data)), [queryResult.data])
+                    }
                 }
             }
             else {
@@ -151,10 +163,12 @@ const App = () => {
                 <div className="second-row">
                     <p className="simple-text">请输入数据库指令：</p>
                     <div>
-                        <input 
+                        <textarea 
                         type="text"
                         value={dbOrder}
                         placeholder="指令"
+                        tyle={{resize: "both", width: "400px"}}
+                        cols={1}
                         onChange={e => setDbOrder(e.target.value)}
                         />
                     </div>
