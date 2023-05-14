@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { FireTwoTone } from "@ant-design/icons"
 import { MyContext } from "../myContext";
-import homeImage from "/src/home.png";
+import homeImage from "/src/image/home.png";
 
 const Homepage = () => {
 

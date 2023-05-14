@@ -17,6 +17,7 @@
   /* header样式 */
   .header-container {
     padding-top: 30px;
+    height: 10%;
   }
 
   header{
@@ -36,11 +37,13 @@
   .subtitle {
     font-size: 25px;
     color: white;
+    margin-bottom: 0px;
   }
   
   .left{
     text-align: left;
     margin-left: 10%;
+    margin-bottom: 0px;
   }
 
   .right{
@@ -52,6 +55,7 @@
     width: 100px;
     margin-right: 10%;
     margin-top: 10px;
+    margin-bottom: 0px;
     color: aliceblue;
     text-align: center;
     vertical-align: middle;
@@ -196,7 +200,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-bottom: 30px;
+    height: 10%;
   }
 
   .footer-text {
@@ -226,10 +230,32 @@
     background-color: #181818 !important;
   }
 
+  .ant-list-item-meta-description {
+    color: rgb(255 255 255 / 45%);
+  }
+
+  a,
+  .ant-pagination-item-ellipsis,
+  .ant-pagination,
+  .ant-list-pagination,
+  .ant-list-pagination-align-end,
+  .ant-layout-sider-children,
+  .ant-list-footer,
+  .ant-list-item-meta-description,
+  .ant-list-item,
   .ant-empty-description {
+    background-color: #181818 !important;
     color: white !important;
   }
 
+  .ant-menu-submenu-popup,
+  .ant-menu-submenu,
+  .ant-menu-item,
+  .ant-menu-submenu-placement-bottomLeft,
+  .ant-menu-vertical,
+  .ant-menu-submenu-open,
+  .ant-menu-submenu-active,
+  .ant-layout-content,
   .ant-modal-title,
   .ant-modal-content,
   .ant-table,
@@ -240,11 +266,6 @@
     color:rgb(255, 255, 255) !important
   }
 
-  .ant-menu-submenu-popup,
-  .ant-menu-submenu,
-  .ant-menu-item,
-  .ant-menu-submenu-placement-bottomLeft,
-  .ant-menu-vertical,
   .ant-input-affix-wrapper,
   .ant-input-password-icon,
   .ant-input,

@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import { SearchOutlined } from '@ant-design/icons';
-import { Button, Input, Space, Table, Tabs } from 'antd';
+import { Button, Input, Space, Table, Tabs, Layout } from 'antd';
 import Highlighter from 'react-highlight-words';
 import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
 
 import baseUrl from "../url";
+import Sider from "antd/es/layout/Sider";
+import { Content } from "antd/es/layout/layout";
 
 // 表格数据
 const data = [
@@ -228,13 +230,19 @@ const Orders = () => {
     return (
         <div>
           <Toaster/>
-            <Tabs
+          <Layout>
+            <Sider></Sider>
+            <Content>
+              <Tabs
                 defaultActiveKey="1"
                 className="order-table"
                 type="card"
                 // size={size}
                 items={tabItems}
               />
+              </Content>
+              <Sider></Sider>
+            </Layout>
         </div>
     )
 }
