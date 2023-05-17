@@ -139,7 +139,7 @@ const App = () => {
                 <Toaster/>
 
                 <Router>
-                    <Suspense fallback={<Spin/>}>
+                    <Suspense fallback={<Spin tip="加载中..."/>}>
                         <Routes>
                         <Route exact path='/' element={<Homepage/>} />
                         <Route path="/login" element={<RenderLoginContainer/>}/>

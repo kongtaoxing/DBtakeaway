@@ -151,7 +151,7 @@
   }
 
   img {
-    padding-bottom: 20px;
+    padding-bottom: 0px;
     width: 35%;
     height: auto;
   }
@@ -243,6 +243,7 @@
   .ant-list-footer,
   .ant-list-item-meta-description,
   .ant-list-item,
+  .ant-list-item-meta-title,
   .ant-empty-description {
     background-color: #181818 !important;
     color: white !important;
@@ -261,7 +262,8 @@
   .ant-table,
   .ant-tabs,
   .ant-tabs-top,
-  .ant-table-column-sort {
+  .ant-table-column-sort,
+  .ant-table-column-sorter {
     background-color: #181818 !important;
     color:rgb(255, 255, 255) !important
   }
@@ -275,4 +277,18 @@
   .ant-table-column-sorter-full {
     background-color:#0d1116 !important;
     color: white !important
+  }
+  
+  .ant-list-split {
+    border-color: white;
+  }
+
+  .tab-container {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .ant-layout-footer {
+    background-color: rgb(53, 53, 53) !important;
+    color: white !important;
   }

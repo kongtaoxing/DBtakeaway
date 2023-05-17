@@ -42,7 +42,7 @@ const Orders = () => {
   let unfiledOrders, filledOrders, allOrders;
 
   async function getOrders () {
-    const user = JSON.parse(localStorcreateTime["user"]);
+    const user = JSON.parse(localStorage["user"]);
     try {
       const res = axios.get(
         baseUrl + "/api/getOrders?id=" + user[0]['id']
@@ -172,6 +172,15 @@ const Orders = () => {
   });
   const columns = [
     {
+      title: "订单ID",
+      dataIndex: 'orderId',
+      key: "orderId",
+      width: 100,
+      sorter: true,
+      sortDirections: ['descend', 'ascend'],
+      ...getColumnSearchProps('orderId')
+    },
+    {
       title: '菜名',
       dataIndex: 'name',
       key: 'name',
@@ -209,7 +218,13 @@ const Orders = () => {
         {
           key: '1',
           label: `未完成订单`,
-          children: <Table size="medium" columns={columns} dataSource={data} scroll={{ y: 240 }}/>,
+          children: 
+          <Table
+           size="medium" 
+           columns={columns} 
+           dataSource={data} 
+           scroll={{ y: 240, x: '100%' }}
+          />,
         },
         {
           key: '2',
@@ -231,17 +246,18 @@ const Orders = () => {
         <div>
           <Toaster/>
           <Layout>
-            <Sider></Sider>
+          <Sider breakpoint="xs" collapsedWidth={0} style={{ overflow: 'hidden', transition: 'width 0.3s' }}></Sider>
             <Content>
               <Tabs
                 defaultActiveKey="1"
                 className="order-table"
                 type="card"
-                // size={size}
+                animated="true"
                 items={tabItems}
+                style={{ width: '100%' }}
               />
               </Content>
-              <Sider></Sider>
+              <Sider breakpoint="xs" collapsedWidth={0} style={{ overflow: 'hidden', transition: 'width 0.3s' }}></Sider>
             </Layout>
         </div>
     )

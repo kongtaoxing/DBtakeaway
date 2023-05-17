@@ -8,7 +8,7 @@ const Homepage = () => {
     const { logedIn, setLogedIn } = useContext(MyContext);
     return (
         <div className="form-container">
-            <img alt="Homepage image" src={homeImage}/>
+            <img alt="Homepage image" src={homeImage} style={{paddingBottom: 20}}/>
             {
                 logedIn 
                 ?
