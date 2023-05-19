@@ -273,6 +273,7 @@
   .ant-input,
   .ant-table-tbody > tr:hover > td,
   .ant-table-thead > tr > th,
+  .ant-table-expanded-row-fixed,
   .ant-table-filter-trigger,
   .ant-table-column-sorter-full {
     background-color:#0d1116 !important;

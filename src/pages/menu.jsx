@@ -1,5 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { Carousel, Avatar, List, Space, Divider, Skeleton, Layout, Image, Select, InputNumber, Button } from "antd";
+import React, { useContext, useEffect, useState } from "react";
+import { MyContext } from "../myContext";
+import { 
+  Carousel, 
+  Avatar, 
+  List, 
+  Space, 
+  Divider, 
+  Skeleton, 
+  Layout, 
+  Image, 
+  Select, 
+  InputNumber, 
+  Button,
+  Modal,
+  FloatButton
+ } from "antd";
 import { 
   StarOutlined, 
   LikeOutlined, 
@@ -22,19 +37,22 @@ import { toast, Toaster } from "react-hot-toast";
   );
 
 const Menupage = () => {
-  const [loading, setLoading] = useState(false);
-  const [data, setData] = useState([]);
-  const [values, setValues] = useState({});
-  const [settle, setSettle] = useState(false);
-  const [priceSum, setPriceSum] = useState(0);
+  // const [loading, setLoading] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const [data, setData] = useState([]);  // menu中的数据
+  const [values, setValues] = useState({});  // 每种菜品的数量
+  const [settle, setSettle] = useState(false);  // 是否展示结算框
+  const [priceSum, setPriceSum] = useState(0);  // 总价格
+
+  const { menuItem, setMenuItem } = useContext(MyContext);
 
   const isVIP = JSON.parse(localStorage["user"])[0]['isVIP'];
 
-  const loadMoreData = () => {
-    if (loading) {
-      return;
-    }
-  }
+  // const loadMoreData = () => {
+  //   if (loading) {
+  //     return;
+  //   }
+  // }
 
   // 动态渲染计算总价格
   const calculateSum = async (dishes, value) => {
@@ -76,7 +94,28 @@ const Menupage = () => {
   
   // 提交订单
   const handleSubmitOrder = async () => {
-    // 
+    try {
+      let postOrder = await axios.post(
+        baseUrl + "/api/submitOrder",
+        {
+          userId: JSON.parse(localStorage["user"])[0]['id'],
+          dataTime: new Date(),
+          detail: values,
+          sum: priceSum
+        }
+      );
+      if (postOrder.data['message'] == 'success') {
+        toast.success("订单提交成功！");
+        setOpenModal(() => false);
+      }
+      else {
+        toast.error("订单提交失败！");
+      }
+    }
+    catch (e) {
+      console.log(e);
+      toast.error("网络错误！");
+    }
   }
 
   // 每次重新渲染的时候载入menu
@@ -86,6 +125,11 @@ const Menupage = () => {
         const response = await axios.get(baseUrl+ '/api/menu');
         setData(() => response.data);
         toast.success("数据加载成功！");
+        let tempMenuItem = [];
+        for (let i = 0; i < response.data.length; i++) {
+          tempMenuItem.push(response.data[i]['dishes']);
+        }
+        setMenuItem(() => tempMenuItem);
       }
       catch (e) {
         toast.error("数据加载出错，请检查网络设置！");
@@ -94,7 +138,7 @@ const Menupage = () => {
     fetchData();
   }, []);
 
-  console.log(data);
+  // console.log(data);
 
   return (
     <div
@@ -113,7 +157,7 @@ const Menupage = () => {
           <Content>
             <InfiniteScroll
               dataLength={data.length}
-              next={loadMoreData}
+              // next={loadMoreData}
               hasMore={data.length < 50}
               // loader={
               //   <Skeleton
@@ -164,7 +208,7 @@ const Menupage = () => {
                     }
                     title={
                       <p>
-                        <Avatar src={sale} />
+                        {item.onSale && <Avatar src={sale} />}
                         {item.dishes}
                       </p>
                     }
@@ -177,6 +221,7 @@ const Menupage = () => {
             )}
             />
             </InfiniteScroll>
+            <FloatButton.BackTop />
           </Content>
           {
             settle
@@ -187,9 +232,19 @@ const Menupage = () => {
                   总价: {priceSum}
                 </div>
                 <div>
-                  <Button type="primary" onClick={handleSubmitOrder}>
+                  <Button type="primary" onClick={() => setOpenModal(true)}>
                     点击结算
                   </Button>
+                  <Modal 
+                    title="确认订单" 
+                    open={openModal} 
+                    onOk={handleSubmitOrder} 
+                    onCancel={() => setOpenModal(false)}
+                    okText="确认提交"
+                    cancelText="取消"
+                  >
+                    <p>{Object.keys(values).reduce((acc, val) => acc + val + '*' + values[val] + '，', '')}总价{priceSum}元。</p>
+                  </Modal>
                 </div>
               </div>
             </Footer>
