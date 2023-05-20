@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Input, Form, Button, Avatar, Modal } from "antd";
+import { Input, Form, Button, Avatar, Modal, Popconfirm, Space } from "antd";
 import { UserOutlined, PhoneOutlined, HomeOutlined } from "@ant-design/icons";
 import { toast, Toaster } from "react-hot-toast";
 import axios from "axios";
+import baseUrl from "../url";
 
 const Profile = () => {
     if (!localStorage['user']) {
@@ -44,7 +45,7 @@ const Profile = () => {
         const handleSubmit = async (values) => {
             try {
                 const postChangeData = await axios.post(
-                    "http://localhost:3000/api/changeUser", 
+                    baseUrl + "/api/changeUser", 
                     {
                         nickname: values['nickname'],
                         phoneNumber: values['phone'],
@@ -104,7 +105,7 @@ const Profile = () => {
             else {
                 try {
                     let changepsd = await axios.post(
-                        "http://localhost:3000/api/changePasswd", 
+                        baseUrl + "/api/changePasswd", 
                         {
                             id: user[0]['id'],
                             oldpasswd: newValues['oldpass'],
@@ -134,6 +135,27 @@ const Profile = () => {
             setOpenModal(() => false);
         }
 
+        const becomeVIP = async () => {
+            try {
+                let vipData = await axios.post(
+                    baseUrl + '/api/becomeVIP',
+                    {
+                        userId: user[0]['id'],
+                    }
+                );
+                if (vipData.data == 'success') {
+                    toast.success("恭喜，您已成为尊贵的VIP会员！");
+                }
+                else {
+                    toast.error("开通失败");
+                }
+            }
+            catch (e) {
+                console.log(e);
+                toast.error("网络错误");
+            }
+        }
+
         useEffect(
             () => {
                 console.log('useEffect: ', user, detail)
@@ -147,7 +169,24 @@ const Profile = () => {
                     <div style={{ display: "flex", alignItems: "center", marginBottom: "20px" }}>
                         <Avatar size={64} icon={<UserOutlined />} />
                         <div style={{ marginLeft: "20px", color: "white"}}>
-                            <h2 style={{ margin: 0 }}>{detail["nickname"]}</h2>
+                            {
+                                user[0]['isVIP'] ? 
+                                <h2 style={{ margin: 0 }}>
+                                    您好，尊贵的VIP会员  {detail["nickname"]}
+                                </h2>
+                                :
+                                <h2>
+                                    您好，{detail["nickname"]}
+                                    <Popconfirm
+                                        title="确定要升级为VIP会员吗？"
+                                        onConfirm={becomeVIP}
+                                        okText="是"
+                                        cancelText="否"
+                                    >
+                                        <Button type="link" >开通会员</Button>
+                                    </Popconfirm>
+                                </h2>
+                            }
                             {/* <p style={{ margin: 0 }}>{user[0]["id"]}</p> */}
                         </div>
                     </div>

@@ -8,6 +8,7 @@ import { toast, Toaster } from "react-hot-toast";
 import baseUrl from "../url";
 import Sider from "antd/es/layout/Sider";
 import { Content } from "antd/es/layout/layout";
+import { useNavigate } from "react-router-dom";
 
 
 const Orders = () => {
@@ -26,6 +27,9 @@ const Orders = () => {
   const [searchText, setSearchText] = useState('');
   const [searchedColumn, setSearchedColumn] = useState('');
   const searchInput = useRef(null);
+
+  const navigate = useNavigate();
+
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
     setSearchText(selectedKeys[0]);
@@ -245,7 +249,15 @@ const Orders = () => {
 
   // 确认订单
   const confirmOrder = async (orderId) => {
-    let riderGotOrderOrNot = allOrders.filter(order => ((order['delivered'] == true || order['delivered'] == false) && order['id'] == orderId));
+    let riderGotOrderOrNot;
+    setAllOrders((prevOrders) => {
+      console.log(allOrders, prevOrders)
+      riderGotOrderOrNot = prevOrders.filter(
+        order => 
+        ((order['delivered'] == true || order['delivered'] == false) && order['id'] == orderId)
+      );
+      return prevOrders;
+    });
     if (riderGotOrderOrNot.length > 0) {
       try {
         let confirmData = await axios.post(
@@ -258,6 +270,13 @@ const Orders = () => {
         );
         if (confirmData.data['message'] == 'success') {
           toast.success('确认成功!');
+          // // 更新对应订单的 delivered 属性
+          // const updatedIndex = prevOrders.findIndex((order) => order.id === orderId);
+          // if (updatedIndex !== -1) {
+          //   prevOrders[updatedIndex].delivered = true;
+          // }
+          // // 更新 allOrders 的值
+          // setAllOrders(prevOrders);
         }
         else {
           toast.error('确认失败！');
@@ -287,11 +306,12 @@ const Orders = () => {
       setOpenModal(() => true);
       setModalText(() => detail);
       
-      let riderGotOrderOrNot = allOrders.filter(order => ((order['delivered'] == true || order['delivered'] == false) && order['id'] == orderId));
+      let riderGotOrderOrNot = prevOrders.filter(order => ((order['delivered'] == true || order['delivered'] == false) && order['id'] == orderId));
       console.log('got?', riderGotOrderOrNot == [])
       riderGotOrderOrNot != false ? setDelivering(() => "骑手已接单") : setDelivering(() => "骑手未接单");
   
       // 返回更新后的 allOrders 值
+      console.log("all orders after check detail:", prevOrders);
       return prevOrders;
     });
   };
@@ -319,195 +339,218 @@ const Orders = () => {
   }
 
   useEffect(() => {
-    async function getOrders () {
-      const user = JSON.parse(localStorage["user"]);
-      try {
-        const response = await axios.get(baseUrl+ '/api/menu');
-        let tempMenuItem = [];
-        for (let i = 0; i < response.data.length; i++) {
-          tempMenuItem.push(response.data[i]['dishes']);
-        }
-        // console.log(tempMenuItem)
-        const res = axios.get(
-          baseUrl + "/api/getOrders?id=" + user[0]['id']
-        );
-        toast.promise(res, {
-          loading: "数据加载中...",
-          success: "加载成功！",
-          error: "加载失败！"
-        })
-        const resData = await res;
-        const orders = resData.data['orders'];
-
-          ////////////
-         // 修改前 //
-        ///////////
-        // // allOrders = resData.data['orders'];
-        // setAllOrders(resData.data['orders']);
-        // for ( var i = 0; i < allOrders.length; i++) {
-        //   allOrders[i] = expandObj(allOrders[i], tempMenuItem);
-        // }
-        // // console.log(allOrders);
-        // for ( var i = 0; i < allOrders.length; i++) {
-        //   // console.log(allOrders[i])
-        //   if (allOrders[i]['delivered'] == true) {
-        //     // console.log(allOrders[i])
-        //     // filledOrders.push(allOrders[i]);
-        //     setFilledOrders(prevOrders => [...prevOrders, allOrders[i]]);
-        //   }
-        //   else {
-        //     // unfiledOrders.push(allOrders[i]);
-        //     setUnfilledOrders(prevOrders => [...prevOrders, allOrders[i]]);
-        //   }
-        // }
-        // console.log('三种订单们', allOrders, unfiledOrders, filledOrders);
-        // setAllData(allOrders.map((item, index) => ({
-        //   key: (index + 1).toString(),
-        //   orderId: item.id,
-        //   createTime: item.create_time,
-        //   endTime: item.endTime,
-        //   address: item.address,
-        // })));
-        // setFilledData(filledOrders.map((item, index) => ({
-        //   key: (index + 1).toString(),
-        //   orderId: item.id,
-        //   createTime: item.create_time,
-        //   endTime: item.endTime,
-        //   address: item.address,
-        // })));
-        // setUnfilledData(unfiledOrders.map((item, index) => ({
-        //   key: (index + 1).toString(),
-        //   orderId: item.id,
-        //   createTime: item.create_time,
-        //   endTime: item.endTime,
-        //   address: item.address,
-        //   option: 
-        //   <Space>
-        //     <Button size="small" type="primary" onClick={null}>查看详情</Button> 
-        //     <Popconfirm
-        //       title="是否确认订单？" 
-        //       onConfirm={() => confirmOrder(item.id)} 
-        //       okText="是" 
-        //       cancelText="否"
-        //     >
-        //       <Button size="small" type="primary" >确认订单</Button>
-        //     </Popconfirm>
-        //   </Space>
-        // })));
-        // console.log(allData)
-
-          ////////////
-         // 修改后 //
-        ///////////
-        setAllOrders(orders);
-
-        const expandedOrders = orders.map(order => expandObj(order, tempMenuItem));
-
-        const newFilledOrders = expandedOrders.filter(order => order['delivered'] === true);
-        const newUnfilledOrders = expandedOrders.filter(order => order['delivered'] !== true);
-
-        setFilledOrders(newFilledOrders);
-        setUnfilledOrders(newUnfilledOrders);
-
-        const allData = expandedOrders.map((item, index) => ({
-          key: (index + 1).toString(),
-          orderId: item.id,
-          createTime: new Date(item.create_time).toLocaleString("zh-CN", { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric',timeZone: 'Asia/Shanghai' }),
-          endTime: item.endTime ? new Date(item.endTime).toLocaleString("zh-CN", { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric',timeZone: 'Asia/Shanghai' }) : null,
-          address: item.address,
-          option:
-          <Button size="small" type="primary" onClick={() => checkOrderDetail(item.id)}>
-            查看详情
-          </Button>
-        }));
-
-        setAllData(allData);
-
-        const filledData = newFilledOrders.map((item, index) => ({
-          key: (index + 1).toString(),
-          orderId: item.id,
-          createTime: new Date(item.create_time).toLocaleString("zh-CN", { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric',timeZone: 'Asia/Shanghai' }),
-          endTime: item.endTime ? new Date(item.endTime).toLocaleString("zh-CN", { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric',timeZone: 'Asia/Shanghai' }) : null,
-          address: item.address,
-          option: 
-          <Button size="small" type="primary" onClick={() => checkOrderDetail(item.id)}>
-            查看详情
-          </Button>
-        }));
-
-        setFilledData(filledData);
-
-        const unfilledData = newUnfilledOrders.map((item, index) => ({
-          key: (index + 1).toString(),
-          orderId: item.id,
-          createTime: new Date(item.create_time).toLocaleString("zh-CN", { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric',timeZone: 'Asia/Shanghai' }),
-          endTime: item.endTime ? new Date(item.endTime).toLocaleString("zh-CN", { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric',timeZone: 'Asia/Shanghai' }) : null,
-          address: item.address,
-          option: (
-            <Space>
-              <Button size="small" type="primary" onClick={() => checkUnfillOrderDetail(item.id)}>
-                查看详情
-              </Button>
-              <Popconfirm
-                title="是否确认订单？"
-                onConfirm={() => confirmOrder(item.id)}
-                okText="是"
-                cancelText="否"
-              >
-                <Button size="small" type="primary">
-                  确认订单
-                </Button>
-              </Popconfirm>
-            </Space>
-          ),
-        }));
-
-        setUnfilledData(unfilledData);
-      }
-      catch (e) {
-        console.log(e);
-      }
-      // console.log("orders")
+    
+    if (!localStorage['user']) {
+      toast(
+        <span>
+          您好，请登录！
+          <button onClick={() => navigate('/login')}>
+            登录
+          </button>
+        </span>
+      );
     }
-    // getOrders();
-    toast.promise(getOrders(), {
-      loading: "数据加载中...",
-      success: "加载成功！",
-      error: "加载失败！"
-    })
-    // console.log('menu item', menuItem)
+    else {
+      async function getOrders () {
+        try {
+          const user = JSON.parse(localStorage["user"]);
+          const response = await axios.get(baseUrl+ '/api/menu');
+          let tempMenuItem = [];
+          for (let i = 0; i < response.data.length; i++) {
+            tempMenuItem.push(response.data[i]['dishes']);
+          }
+          // console.log(tempMenuItem)
+          const res = axios.get(
+            baseUrl + "/api/getOrders?id=" + user[0]['id']
+          );
+          toast.promise(res, {
+            loading: "数据加载中...",
+            success: "加载成功！",
+            error: "加载失败！"
+          })
+          const resData = await res;
+          const orders = resData.data['orders'];
+  
+            ////////////
+           // 修改前 //
+          ///////////
+          // // allOrders = resData.data['orders'];
+          // setAllOrders(resData.data['orders']);
+          // for ( var i = 0; i < allOrders.length; i++) {
+          //   allOrders[i] = expandObj(allOrders[i], tempMenuItem);
+          // }
+          // // console.log(allOrders);
+          // for ( var i = 0; i < allOrders.length; i++) {
+          //   // console.log(allOrders[i])
+          //   if (allOrders[i]['delivered'] == true) {
+          //     // console.log(allOrders[i])
+          //     // filledOrders.push(allOrders[i]);
+          //     setFilledOrders(prevOrders => [...prevOrders, allOrders[i]]);
+          //   }
+          //   else {
+          //     // unfiledOrders.push(allOrders[i]);
+          //     setUnfilledOrders(prevOrders => [...prevOrders, allOrders[i]]);
+          //   }
+          // }
+          // console.log('三种订单们', allOrders, unfiledOrders, filledOrders);
+          // setAllData(allOrders.map((item, index) => ({
+          //   key: (index + 1).toString(),
+          //   orderId: item.id,
+          //   createTime: item.create_time,
+          //   endTime: item.endTime,
+          //   address: item.address,
+          // })));
+          // setFilledData(filledOrders.map((item, index) => ({
+          //   key: (index + 1).toString(),
+          //   orderId: item.id,
+          //   createTime: item.create_time,
+          //   endTime: item.endTime,
+          //   address: item.address,
+          // })));
+          // setUnfilledData(unfiledOrders.map((item, index) => ({
+          //   key: (index + 1).toString(),
+          //   orderId: item.id,
+          //   createTime: item.create_time,
+          //   endTime: item.endTime,
+          //   address: item.address,
+          //   option: 
+          //   <Space>
+          //     <Button size="small" type="primary" onClick={null}>查看详情</Button> 
+          //     <Popconfirm
+          //       title="是否确认订单？" 
+          //       onConfirm={() => confirmOrder(item.id)} 
+          //       okText="是" 
+          //       cancelText="否"
+          //     >
+          //       <Button size="small" type="primary" >确认订单</Button>
+          //     </Popconfirm>
+          //   </Space>
+          // })));
+          // console.log(allData)
+  
+            ////////////
+           // 修改后 //
+          ///////////
+          setAllOrders(orders);
+  
+          const expandedOrders = orders.map(order => expandObj(order, tempMenuItem));
+  
+          const newFilledOrders = expandedOrders.filter(order => order['delivered'] === true);
+          const newUnfilledOrders = expandedOrders.filter(order => order['delivered'] !== true);
+  
+          setFilledOrders(newFilledOrders);
+          setUnfilledOrders(newUnfilledOrders);
+  
+          const allData = expandedOrders.map((item, index) => ({
+            key: (index + 1).toString(),
+            orderId: item.id,
+            createTime: new Date(item.create_time).toLocaleString("zh-CN", { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric',timeZone: 'Asia/Shanghai' }),
+            endTime: item.endTime ? new Date(item.endTime).toLocaleString("zh-CN", { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric',timeZone: 'Asia/Shanghai' }) : null,
+            address: item.address,
+            option:
+            <Button size="small" type="primary" onClick={() => checkOrderDetail(item.id)}>
+              查看详情
+            </Button>
+          }));
+  
+          setAllData(allData);
+  
+          const filledData = newFilledOrders.map((item, index) => ({
+            key: (index + 1).toString(),
+            orderId: item.id,
+            createTime: new Date(item.create_time).toLocaleString("zh-CN", { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric',timeZone: 'Asia/Shanghai' }),
+            endTime: item.endTime ? new Date(item.endTime).toLocaleString("zh-CN", { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric',timeZone: 'Asia/Shanghai' }) : null,
+            address: item.address,
+            option: 
+            <Button size="small" type="primary" onClick={() => checkOrderDetail(item.id)}>
+              查看详情
+            </Button>
+          }));
+  
+          setFilledData(filledData);
+  
+          const unfilledData = newUnfilledOrders.map((item, index) => ({
+            key: (index + 1).toString(),
+            orderId: item.id,
+            createTime: new Date(item.create_time).toLocaleString("zh-CN", { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric',timeZone: 'Asia/Shanghai' }),
+            endTime: item.endTime ? new Date(item.endTime).toLocaleString("zh-CN", { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric',timeZone: 'Asia/Shanghai' }) : null,
+            address: item.address,
+            option: (
+              <Space>
+                <Button size="small" type="primary" onClick={() => checkUnfillOrderDetail(item.id)}>
+                  查看详情
+                </Button>
+                <Popconfirm
+                  title="是否确认订单？"
+                  onConfirm={() => confirmOrder(item.id)}
+                  okText="是"
+                  cancelText="否"
+                >
+                  <Button size="small" type="primary">
+                    确认订单
+                  </Button>
+                </Popconfirm>
+              </Space>
+            ),
+          }));
+  
+          setUnfilledData(unfilledData);
+        }
+        catch (e) {
+          console.log(e);
+        }
+        // console.log("orders")
+      }
+      // getOrders();
+      toast.promise(getOrders(), {
+        loading: "数据加载中...",
+        success: "加载成功！",
+        error: "加载失败！"
+      })
+      // console.log('menu item', menuItem)
+    }
   }, [])
 
-  return (
-      <div>
-        <Toaster/>
-        <Layout>
-        <Sider breakpoint="xs" collapsedWidth={0} style={{ overflow: 'hidden', transition: 'width 0.3s' }}></Sider>
-          <Content>
-            <Tabs
-              defaultActiveKey="1"
-              className="order-table"
-              type="card"
-              animated="true"
-              items={tabItems}
-              style={{ width: '100%' }}
-            />
-            <Modal 
-              title="订单详情" 
-              open={openModal} 
-              onOk={destroyModal} 
-              onCancel={destroyModal}
-              okText="确定"
-              cancelText="取消"
-            >
-              <p>{modalText}</p>
-              <p>{delivering}</p>
-            </Modal>
-            </Content>
+  if (localStorage["user"]) {
+    return (
+        <div>
+          <Toaster/>
+          <Layout>
           <Sider breakpoint="xs" collapsedWidth={0} style={{ overflow: 'hidden', transition: 'width 0.3s' }}></Sider>
-        </Layout>
+            <Content>
+              <Tabs
+                defaultActiveKey="1"
+                className="order-table"
+                type="card"
+                animated="true"
+                items={tabItems}
+                style={{ width: '100%' }}
+              />
+              <Modal 
+                title="订单详情" 
+                open={openModal} 
+                onOk={destroyModal} 
+                onCancel={destroyModal}
+                okText="确定"
+                cancelText="取消"
+              >
+                <p>{modalText}</p>
+                <p>{delivering}</p>
+              </Modal>
+              </Content>
+            <Sider breakpoint="xs" collapsedWidth={0} style={{ overflow: 'hidden', transition: 'width 0.3s' }}></Sider>
+          </Layout>
+        </div>
+    )
+  }
+  else {
+    return (
+      <div className="form-container">
+          <Toaster/>
+          <h1>您好，请登录！</h1>
       </div>
-  )
+    )
+  }
 }
 
 export default Orders;
