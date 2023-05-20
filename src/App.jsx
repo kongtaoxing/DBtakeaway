@@ -98,26 +98,30 @@ const App = () => {
         if (localStorage['loginStatus']) {
             setLogedIn(() => localStorage['loginStatus']);
         }
-        async function fetchDB() {
-            try {
-                let queryConnectDB = await axios.post(
-                    baseUrl + '/api/connectDB',
-                    {
-                        url: "172.24.65.85",
-                        port: 3306,
-                        userName: "root",
-                        passwd: "20281128"
+        if (localStorage["user"]) {
+            async function fetchUser() {
+                try {
+                    console.log(JSON.parse(localStorage['user']))
+                    let queryUser = await axios.get(
+                        baseUrl + '/api/getUser?id=' + JSON.parse(localStorage['user'])[0]['id']
+                    );
+                    if (queryUser.data['message'] === 'success') {
+                        setConnected(() => true);
+                        console.log(queryUser.data['userInfo'])
+                        localStorage.setItem('user', JSON.stringify(queryUser.data['userInfo']));
                     }
-                );
-                if (queryConnectDB.data === 'connected') {
-                    setConnected(() => true);
+                }
+                catch (e) {
+                    console.log(e);
                 }
             }
-            catch (e) {
-                console.log(e);
+            if (localStorage["user"] == 'undefined') {
+                localStorage.removeItem('user');
+            }
+            else {
+                fetchUser();
             }
         }
-        fetchDB();
     }, []);
 
     return (
