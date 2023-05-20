@@ -1,5 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
+import { toast, Toaster } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 import baseUrl from "../url";
 
@@ -10,6 +12,8 @@ const Signup = () => {
     const [repasswd, setRepasswd] = useState("");
     const [registered, setRegistered] = useState(false);
     const [returnError, setReturnError] = useState(false);
+
+    const navigate = useNavigate();
 
     const signup = async () => {
         try {
@@ -22,13 +26,17 @@ const Signup = () => {
             );
             if (signupData.data === 'success') {
                 setRegistered(() => true);
+                toast.success("注册成功！正在跳转登录页面...");
+                navigate('/login');
             }
             else {
                 setReturnError(true);
+                toast.error("注册失败，请联系网站管理员");
             }
         }
         catch (e) {
             console.log(e);
+            toast.error("网络错误！");
             setReturnError(true);
         };
     }
@@ -68,6 +76,7 @@ const Signup = () => {
 
     return (
         <div className="form-container">
+            <Toaster />
             <div className="form-group">
                 <label htmlFor="input1">手机号：</label>
                 <input 
