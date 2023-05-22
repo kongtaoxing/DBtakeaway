@@ -93,42 +93,49 @@ const Profile = () => {
         
         const handleOk = async () => {
             setConfirmLoading(() => true);
-            let newValues = await passwdForm.validateFields()
-            passwdForm.resetFields();
-            console.log(newValues);
-            if (newValues['password'] != newValues['repassword']) {
-                toast.error("两次输入的密码不一致！");
-            }
-            else if (newValues['oldpass'] == newValues['password']) {
-                toast.error("新密码不能与旧密码相同！");
-            }
-            else {
-                try {
-                    let changepsd = await axios.post(
-                        baseUrl + "/api/changePasswd", 
-                        {
-                            id: user[0]['id'],
-                            oldpasswd: newValues['oldpass'],
-                            passwd: newValues['password'],
-                            repasswd: newValues['repassword']
+            try {
+                let newValues = await passwdForm.validateFields()
+                passwdForm.resetFields();
+                console.log(newValues);
+                if (newValues['password'] != newValues['repassword']) {
+                    toast.error("两次输入的密码不一致！");
+                }
+                else if (newValues['oldpass'] == newValues['password']) {
+                    toast.error("新密码不能与旧密码相同！");
+                }
+                else {
+                    try {
+                        let changepsd = await axios.post(
+                            baseUrl + "/api/changePasswd", 
+                            {
+                                id: user[0]['id'],
+                                oldpasswd: newValues['oldpass'],
+                                passwd: newValues['password'],
+                                repasswd: newValues['repassword']
+                            }
+                        );
+                        if (changepsd.data['message'] == "success") {
+                            toast.success("修改成功！");
                         }
-                    );
-                    if (changepsd.data['message'] == "success") {
-                        toast.success("修改成功！");
+                        else if (changepsd.data['message'] == "error") {
+                            toast.error(changepsd.data['data']);
+                        }
+                        else {
+                            toast.error("修改失败！");
+                        }
                     }
-                    else if (changepsd.data['message'] == "error") {
-                        toast.error(changepsd.data['data']);
-                    }
-                    else {
-                        toast.error("修改失败！");
+                    catch (e) {
+                        toast.error("网络错误！");
+                        setConfirmLoading(() => false);
                     }
                 }
-                catch (e) {
-                    toast.error("网络错误！");
-                    setConfirmLoading(() => false);
-                }
+                setConfirmLoading(() => false);
             }
-            setConfirmLoading(() => false);
+            catch (e) {
+                setConfirmLoading(() => false);
+                toast.error("密码不符合规则！");
+                passwdForm.resetFields();
+            }
         };
 
         const handleCancel = async () => {
