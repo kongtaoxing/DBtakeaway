@@ -185,6 +185,51 @@ const Orders = () => {
     }
   ];
 
+  const columnsFilled = [
+    {
+      title: "订单ID",
+      dataIndex: 'orderId',
+      key: "orderId",
+      width: 100,
+      sorter: (a, b) => a.orderId - b.orderId,
+      sortDirections: ['descend', 'ascend'],
+      ...getColumnSearchProps('orderId')
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'createTime',
+      key: 'createTime',
+      width: 200,
+      ...getColumnSearchProps('createTime'),
+      sorter: (a, b) => new Date(a.createTime.replace('年', '-').replace('月', '-').replace('日', '')) - new Date(b.createTime.replace('年', '-').replace('月', '-').replace('日', '')),
+      sortDirections: ['descend', 'ascend'],
+    },
+    {
+      title: "配送时间",
+      dataIndex: 'endTime',
+      key: 'endTime',
+      width: 200,
+      ...getColumnSearchProps('endTime'),
+      sorter: (a, b) => new Date(a.createTime.replace('年', '-').replace('月', '-').replace('日', '')) - new Date(b.createTime.replace('年', '-').replace('月', '-').replace('日', '')),
+      sortDirections: ['descend', 'ascend'],
+    },
+    {
+      title: '配送地址',
+      dataIndex: 'address',
+      key: 'address',
+      width: 150,
+      ...getColumnSearchProps('address'),
+      sorter: (a, b) => a.address.length - b.address.length,
+      sortDirections: ['descend', 'ascend'],
+    },
+    {
+      title: '操作',
+      dataIndex: 'option',
+      key: 'option',
+      width: 200
+    }
+  ];
+
   // 分页属性
   const tabItems = [
       {
@@ -204,7 +249,7 @@ const Orders = () => {
         children: 
         <Table
           size="medium" 
-          columns={columns} 
+          columns={columnsFilled} 
           dataSource={filledData} 
           scroll={{ y: 240, x: '100%' }}
         />,
@@ -296,6 +341,28 @@ const Orders = () => {
     }
   }
 
+  // 删除订单
+  const deleteOrder = async (orderId) => {
+    try {
+      let deleteData = await axios.post(
+        baseUrl + "/api/deleteOrder",
+        {
+          orderId: orderId,
+        }
+      );
+      if (deleteData.data =='success') {
+        toast.success("删除成功！");
+      }
+      else {
+        toast.error("删除失败！");
+      }
+    }
+    catch (e) {
+      console.log(e);
+      toast.success("网络错误！");
+    }
+  }
+
   // 查看订单详情
   const checkUnfillOrderDetail = async (orderId) => {
     setAllOrders((prevOrders) => {
@@ -306,7 +373,7 @@ const Orders = () => {
       setOpenModal(() => true);
       setModalText(() => detail);
       
-      let riderGotOrderOrNot = prevOrders.filter(order => ((order['delivered'] == true || order['delivered'] == false) && order['id'] == orderId));
+      let riderGotOrderOrNot = prevOrders.filter(order => order.hasOwnProperty('delivered') && order['id'] == orderId);
       console.log('got?', riderGotOrderOrNot == [])
       riderGotOrderOrNot != false ? setDelivering(() => "骑手已接单") : setDelivering(() => "骑手未接单");
   
@@ -435,8 +502,8 @@ const Orders = () => {
   
           const expandedOrders = orders.map(order => expandObj(order, tempMenuItem));
   
-          const newFilledOrders = expandedOrders.filter(order => order['delivered'] === true);
-          const newUnfilledOrders = expandedOrders.filter(order => order['delivered'] !== true);
+          const newFilledOrders = expandedOrders.filter(order => order['confirmed'] === true);
+          const newUnfilledOrders = expandedOrders.filter(order => order['confirmed'] !== true);
   
           setFilledOrders(newFilledOrders);
           setUnfilledOrders(newUnfilledOrders);
@@ -462,9 +529,21 @@ const Orders = () => {
             endTime: item.endTime ? new Date(item.endTime).toLocaleString("zh-CN", { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric',timeZone: 'Asia/Shanghai' }) : null,
             address: item.address,
             option: 
-            <Button size="small" type="primary" onClick={() => checkOrderDetail(item.id)}>
-              查看详情
-            </Button>
+            <Space>
+              <Button size="small" type="primary" onClick={() => checkOrderDetail(item.id)}>
+                查看详情
+              </Button>
+              <Popconfirm
+                title="是否删除订单？"
+                onConfirm={() => deleteOrder(item.id)}
+                okText="是"
+                cancelText="否"
+              >
+                <Button size="small" type="primary" >
+                  删除订单
+                </Button>
+              </Popconfirm>
+            </Space>
           }));
   
           setFilledData(filledData);
