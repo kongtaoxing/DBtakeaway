@@ -1,0 +1,1 @@
+import{j as u}from"./index.97a6e20b.js";import{E as o}from"./index.bb0ff2b3.js";import"./useLocale.710149ec.js";const p=()=>u(o,{description:"\u5466\uFF0C\u8FD9\u91CC\u597D\u50CF\u4EC0\u4E48\u90FD\u6CA1\u6709~"});export{p as default};
