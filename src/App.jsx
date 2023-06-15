@@ -19,11 +19,13 @@ import {
     LogoutOutlined,
     MenuUnfoldOutlined,
     UserOutlined,
-    HomeOutlined
+    HomeOutlined,
+    QrcodeOutlined
 } from "@ant-design/icons";
-import { Menu, Spin } from "antd";
+import { FloatButton, Image, Menu, Spin } from "antd";
 
 import baseUrl from "./url";
+import qrcode from "./image/qr1.png";
 
 // 使用lasy+Suspense方式动态import其他页面模块，防止chunk过大影响加载
 const Homepage = lazy(() => import('./pages/homepage'));
@@ -155,6 +157,8 @@ const App = () => {
                         </Routes>
                     </Suspense>
                 </Router>
+
+                <FloatButton tooltip={<Image src={qrcode} width={100} />} icon={<QrcodeOutlined />} />
 
                 <div className="footer-container">
                     <MailOutlined style={{marginRight: 5}}/>
